@@ -1,0 +1,60 @@
+import os
+import whisper
+from flask import Flask
+from transformers import pipeline
+import pandas as pd
+
+app = Flask(__name__)
+
+print("Current Working Directory:", os.getcwd())
+print("Files in Directory:", os.listdir("."))
+
+@app.route('/')
+def home():
+    return "Hello, Flask!"
+
+# Load Whisper model for transcription
+model = whisper.load_model("base")
+print("Model loaded successfully!")
+
+# Transcribe audio from video
+result = model.transcribe("trump.mp3")
+transcript = result["text"]
+print("\nTranscription:\n", transcript)
+
+# Load BERT models for classification
+misinfo_classifier = pipeline("text-classification", model="ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli")
+hate_classifier = pipeline("text-classification", model="GroNLP/hateBERT")
+
+# Improve sentence splitting using NLP
+import re
+sentences = re.split(r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s', transcript)  # More accurate splitting
+
+# Classify each sentence
+analysis_results = []
+for sentence in sentences:
+    if sentence.strip():  # Ignore empty sentences
+        misinfo_result = misinfo_classifier(sentence)[0]
+        hate_result = hate_classifier(sentence)[0]
+        
+        analysis_results.append({
+            "sentence": sentence,
+            "misinformation": misinfo_result['label'],
+            "misinfo_score": round(misinfo_result['score'], 2),
+            "xenophobia": hate_result['label'],
+            "xenophobia_score": round(hate_result['score'], 2)
+        })
+
+# Print analysis results
+for result in analysis_results:
+    print(f"\n🔹 Sentence: {result['sentence']}")
+    print(f"   🔍 Misinformation: {result['misinformation']} (Score: {result['misinfo_score']})")
+    print(f"   ⚠️ Xenophobia: {result['xenophobia']} (Score: {result['xenophobia_score']})")
+
+# Save results to a CSV file
+df = pd.DataFrame(analysis_results)
+df.to_csv("analysis_results1.csv", index=False)
+print("\n📂 Results saved to 'analysis_results1.csv'")
+
+if __name__ == '__main__':
+    app.run(debug=True)
