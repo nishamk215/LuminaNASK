@@ -1,0 +1,153 @@
+
+import os
+import re
+import ffmpeg
+import cv2
+import pandas as pd
+import numpy as np
+import whisper
+import matplotlib.pyplot as plt
+from flask import Flask, request, send_file, jsonify
+from werkzeug.utils import secure_filename
+from transformers import pipeline
+import nltk
+nltk.download('punkt')
+from nltk.tokenize import sent_tokenize
+import threading
+from datetime import datetime
+
+# Initialize Flask app
+app = Flask(__name__)
+app.config["UPLOAD_FOLDER"] = "uploads"
+os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
+
+# Load Whisper model for speech-to-text
+whisper_model = whisper.load_model("base")
+
+# Load NLP models for xenophobia detection
+hatebert = pipeline("text-classification", model="GroNLP/hateBERT")
+bertweet = pipeline("text-classification", model="vinai/bertweet-base")
+distilbert = pipeline("text-classification", model="distilbert-base-uncased-finetuned-sst-2-english")
+
+ALLOWED_EXTENSIONS = {"mp4", "avi", "mov"}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def extract_audio(video_path, audio_path="audio.wav"):
+    try:
+        ffmpeg.input(video_path).output(audio_path, format="wav", acodec="pcm_s16le", ar="16000").run(overwrite_output=True)
+        return audio_path
+    except Exception as e:
+        print(f"Error extracting audio: {e}")
+        return None
+
+# Load Sentiment Analysis Model
+sentiment_model = pipeline("sentiment-analysis")
+
+def analyze_text(text):
+    sentences = sent_tokenize(text)  # More accurate sentence splitting
+    results = []
+    
+    for sentence in sentences:
+        if sentence.strip():
+            try:
+                # Run NLP models
+                hatebert_result = hatebert(sentence)[0]
+                bertweet_result = bertweet(sentence)[0]
+                distilbert_result = distilbert(sentence)[0]
+                sentiment_result = sentiment_model(sentence)[0]
+
+                # Compute xenophobia score (average confidence of all models)
+                xenophobia_score = round(((hatebert_result['score'] + bertweet_result['score'] + distilbert_result['score']) / 3) * 10, 2)
+
+                # Append results
+                results.append({
+                    "sentence": sentence,
+                    "hatebert_label": hatebert_result['label'],
+                    "hatebert_confidence": round(hatebert_result['score'], 2),
+                    "bertweet_label": bertweet_result['label'],
+                    "bertweet_confidence": round(bertweet_result['score'], 2),
+                    "distilbert_label": distilbert_result['label'],
+                    "distilbert_confidence": round(distilbert_result['score'], 2),
+                    "xenophobia_score": xenophobia_score,
+                    "sentiment": sentiment_result['label'],
+                    "sentiment_confidence": round(sentiment_result['score'], 2),
+                    "flagged_as_xenophobic": "Yes" if xenophobia_score > 5 else "No"
+                })
+            except Exception as e:
+                print(f"Error analyzing sentence '{sentence}': {e}")
+    
+    return results
+
+
+def generate_report(results, transcript):
+    downloads_folder = "/Users/sanahhathiramani/Desktop/UNICC/Downloads"
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"analysis_report_{timestamp}.csv"
+    csv_path = os.path.join(downloads_folder, filename)
+
+    print(f"📂 Attempting to save report at: {csv_path}")  # Debugging line
+
+    df = pd.DataFrame(results)
+    df.insert(0, "Full Transcript", transcript)
+
+    if df.empty:
+        print("⚠️ No data to save! The analysis returned an empty dataset.")
+
+    try:
+        df.to_csv(csv_path, index=False)
+        print(f"✅ Report successfully saved at {csv_path}")
+        return csv_path
+    except Exception as e:
+        print(f"❌ Error saving report: {e}")
+        return None
+
+
+def process_latest_video():
+    files = [f for f in os.listdir(app.config["UPLOAD_FOLDER"]) if allowed_file(f)]
+    if not files:
+        print("❌ No video files found in uploads/")
+        return
+    
+    latest_file = max(files, key=lambda f: os.path.getctime(os.path.join(app.config["UPLOAD_FOLDER"], f)))
+    video_path = os.path.join(app.config["UPLOAD_FOLDER"], latest_file)
+    print(f"📂 Processing latest uploaded video: {latest_file}")
+    
+    audio_path = extract_audio(video_path)
+    if not audio_path:
+        print("❌ Audio extraction failed")
+        return
+    
+    transcript = whisper_model.transcribe(audio_path)["text"]
+    print(f"🎙 Transcript: {transcript[:100]}...")  # Print first 100 chars for debugging
+    
+    analysis_results = analyze_text(transcript)
+    print(f"🔍 Analysis Results: {analysis_results[:3]}")  # Print first 3 results for debugging
+    
+    if not analysis_results:
+        print("❌ Text analysis failed")
+        return
+    
+    report_path = generate_report(analysis_results, transcript)
+    if not report_path:
+        print("❌ Failed to save report")
+        return
+    
+    os.remove(audio_path)  # Keep video but remove temporary audio
+    print(f"✅ Automated processing complete. Report saved at {report_path}")
+
+
+@app.route("/process_existing", methods=["POST"])
+def process_existing():
+    process_latest_video()
+    return jsonify({"message": "Processing completed, report saved in Downloads."})
+
+
+if __name__ == "__main__":
+    # Start processing in the background as soon as the app runs
+    processing_thread = threading.Thread(target=process_latest_video, daemon=True)
+    processing_thread.start()
+
+    # Start Flask server
+    app.run(debug=True)
