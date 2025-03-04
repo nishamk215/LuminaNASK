@@ -1,4 +1,4 @@
-run this in the terminal before running app.py - uvicorn api:app --reload
+run this in the terminal before running app.py - uvicorn api:app --reload (install fastapi before)
 
 
 
