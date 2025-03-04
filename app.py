@@ -1,21 +1,14 @@
 import os
-import re
 import ffmpeg
-import cv2
-import pandas as pd
-import numpy as np
 import whisper
-import matplotlib.pyplot as plt
-from flask import Flask, request, send_file, jsonify
+import requests
+from flask import Flask, request, jsonify, render_template, send_file
 from werkzeug.utils import secure_filename
-from transformers import pipeline
-import nltk
-nltk.download('punkt')
 from nltk.tokenize import sent_tokenize
-import threading
 from datetime import datetime
+import pandas as pd
 
-# Initialize Flask app
+# Flask app setup
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = "uploads"
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
@@ -23,125 +16,105 @@ os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 # Load Whisper model for speech-to-text
 whisper_model = whisper.load_model("base")
 
-# Load NLP models for xenophobia detection 
-hatebert = pipeline("text-classification", model="GroNLP/hateBERT")
-bertweet = pipeline("text-classification", model="vinai/bertweet-base")
-distilbert = pipeline("text-classification", model="distilbert-base-uncased-finetuned-sst-2-english")
+# API endpoint
+API_URL = "http://127.0.0.1:8000/predict"  # Update if hosted elsewhere
 
 ALLOWED_EXTENSIONS = {"mp4", "avi", "mov"}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def extract_audio(video_path, audio_path="audio.wav"):
+def process_video(video_path):
     try:
-        ffmpeg.input(video_path).output(audio_path, format="wav", acodec="pcm_s16le", ar="16000").run(overwrite_output=True)
-        return audio_path
+        # Transcribe directly from video file
+        transcript = whisper_model.transcribe(video_path)["text"]
+        return transcript
     except Exception as e:
-        print(f"Error extracting audio: {e}")
+        print(f"Error processing video: {e}")
         return None
 
-# Load Sentiment Analysis Model
-sentiment_model = pipeline("sentiment-analysis")
-
 def analyze_text(text):
-    sentences = sent_tokenize(text)  # More accurate sentence splitting
+    sentences = sent_tokenize(text)
     results = []
     
     for sentence in sentences:
-        if sentence.strip():
-            try:
-                # Run NLP models
-                hatebert_result = hatebert(sentence)[0]
-                bertweet_result = bertweet(sentence)[0]
-                distilbert_result = distilbert(sentence)[0]
-                sentiment_result = sentiment_model(sentence)[0]
-
-                # Compute xenophobia score (average confidence of all models)
-                xenophobia_score = round(((hatebert_result['score'] + bertweet_result['score'] + distilbert_result['score']) / 3) * 10, 2)
-
-                # Append results
+        try:
+            response = requests.post(API_URL, json={"text": sentence})
+            if response.status_code == 200:
+                data = response.json()
                 results.append({
                     "sentence": sentence,
-                    "hatebert_label": hatebert_result['label'],
-                    "hatebert_confidence": round(hatebert_result['score'], 2),
-                    "bertweet_label": bertweet_result['label'],
-                    "bertweet_confidence": round(bertweet_result['score'], 2),
-                    "distilbert_label": distilbert_result['label'],
-                    "distilbert_confidence": round(distilbert_result['score'], 2),
-                    "xenophobia_score": xenophobia_score,
-                    "sentiment": sentiment_result['label'],
-                    "sentiment_confidence": round(sentiment_result['score'], 2),
-                    "flagged_as_xenophobic": "Yes" if xenophobia_score > 5 else "No"
+                    "predictions": data["predictions"],
+                    "labels": data["labels"]
                 })
-            except Exception as e:
-                print(f"Error analyzing sentence '{sentence}': {e}")
+            else:
+                print(f"Error from API: {response.status_code} - {response.text}")
+        except Exception as e:
+            print(f"Error analyzing sentence '{sentence}': {e}")
     
     return results
 
 def generate_report(results):
-    downloads_folder = "/Users/sanahhathiramani/Desktop/UNICC/Downloads"
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    downloads_folder = "Downloads"
+    os.makedirs(downloads_folder, exist_ok=True)  # Ensure the folder exists
     filename = f"analysis_report_{timestamp}.csv"
     csv_path = os.path.join(downloads_folder, filename)
-
-    print(f"📂 Attempting to save report at: {csv_path}")  # Debugging line
-
-    df = pd.DataFrame(results)
-    
-    if df.empty:
-        print("⚠️ No data to save! The analysis returned an empty dataset.")
     
     try:
-        df.to_csv(csv_path, index=False)
-        print(f"✅ Report successfully saved at {csv_path}")
+        pd.DataFrame(results).to_csv(csv_path, index=False)
         return csv_path
     except Exception as e:
-        print(f"❌ Error saving report: {e}")
+        print(f"Error saving report: {e}")
         return None
 
-def process_latest_video():
-    files = [f for f in os.listdir(app.config["UPLOAD_FOLDER"]) if allowed_file(f)]
-    if not files:
-        print("❌ No video files found in uploads/")
-        return
-    
-    latest_file = max(files, key=lambda f: os.path.getctime(os.path.join(app.config["UPLOAD_FOLDER"], f)))
-    video_path = os.path.join(app.config["UPLOAD_FOLDER"], latest_file)
-    print(f"📂 Processing latest uploaded video: {latest_file}")
-    
-    audio_path = extract_audio(video_path)
-    if not audio_path:
-        print("❌ Audio extraction failed")
-        return
-    
-    transcript = whisper_model.transcribe(audio_path)["text"]
-    print(f"🎙 Transcript: {transcript[:100]}...")  # Print first 100 chars for debugging
-    
-    analysis_results = analyze_text(transcript)
-    print(f"🔍 Analysis Results: {analysis_results[:3]}")  # Print first 3 results for debugging
-    
-    if not analysis_results:
-        print("❌ Text analysis failed")
-        return
-    
-    report_path = generate_report(analysis_results)
-    if not report_path:
-        print("❌ Failed to save report")
-        return
-    
-    os.remove(audio_path)  # Keep video but remove temporary audio
-    print(f"✅ Automated processing complete. Report saved at {report_path}")
+@app.route("/")
+def index():
+    return render_template("index.html") 
 
 @app.route("/process_existing", methods=["POST"])
 def process_existing():
-    process_latest_video()
-    return jsonify({"message": "Processing completed, report saved in Downloads."})
+    if "file" not in request.files:
+        return "No file part", 400
+
+    file = request.files["file"]
+    if file.filename == "":
+        return "No selected file", 400
+
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        file.save(file_path)  # Save the newly uploaded file
+
+        # Process the uploaded file
+        transcript = process_video(file_path)
+        if not transcript:
+            return "Error processing video", 500
+
+        analysis_results = analyze_text(transcript)
+        if not analysis_results:
+            return "Error analyzing text", 500
+
+        report_path = generate_report(analysis_results)
+        if report_path:
+            report_filename = os.path.basename(report_path)
+            report_url = f"/download/{report_filename}"
+        else:
+            report_url = None
+
+        return render_template("results.html", message="Processing completed!", report_url=report_url, transcript=transcript)
+
+    return "Invalid file format", 400
+
+@app.route("/download/<filename>")
+def download_report(filename):
+    downloads_folder = "Downloads"  # Ensure this matches where reports are saved
+    file_path = os.path.join(downloads_folder, filename)
+    
+    if os.path.exists(file_path):
+        return send_file(file_path, as_attachment=True)
+    else:
+        return "File not found", 404
 
 if __name__ == "__main__":
-    # Start processing in the background as soon as the app runs
-    processing_thread = threading.Thread(target=process_latest_video, daemon=True)
-    processing_thread.start()
-
-    # Start Flask server
     app.run(debug=True)
