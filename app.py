@@ -1,12 +1,13 @@
 import os
 import ffmpeg
 import whisper
-import requests
+import json
 from flask import Flask, request, jsonify, render_template, send_file
 from werkzeug.utils import secure_filename
 from nltk.tokenize import sent_tokenize
 from datetime import datetime
 import pandas as pd
+from transformers import pipeline  # Integrated toxicity model directly
 
 # Flask app setup
 app = Flask(__name__)
@@ -16,8 +17,18 @@ os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 # Load Whisper model for speech-to-text
 whisper_model = whisper.load_model("base")
 
-# API endpoint
-API_URL = "http://127.0.0.1:8000/predict"  # Update if hosted elsewhere
+# Load toxicity classification model
+toxicity_model = pipeline("text-classification", model="unitary/toxic-bert", return_all_scores=True)
+
+# Define toxicity thresholds
+TOXICITY_THRESHOLDS = {
+    "toxic": 0.5,
+    "severe_toxic": 0.3,
+    "obscene": 0.5,
+    "threat": 0.5,
+    "insult": 0.5,
+    "identity_hate": 0.5
+}
 
 ALLOWED_EXTENSIONS = {"mp4", "avi", "mov"}
 
@@ -25,8 +36,8 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def process_video(video_path):
+    """ Transcribe video file using Whisper model """
     try:
-        # Transcribe directly from video file
         transcript = whisper_model.transcribe(video_path)["text"]
         return transcript
     except Exception as e:
@@ -34,35 +45,47 @@ def process_video(video_path):
         return None
 
 def analyze_text(text):
+    """ Analyze sentences for toxicity using the integrated model """
     sentences = sent_tokenize(text)
     results = []
     
     for sentence in sentences:
         try:
-            response = requests.post(API_URL, json={"text": sentence})
-            if response.status_code == 200:
-                data = response.json()
-                results.append({
-                    "sentence": sentence,
-                    "predictions": data["predictions"],
-                    "labels": data["labels"]
-                })
-            else:
-                print(f"Error from API: {response.status_code} - {response.text}")
+            toxicity_results = toxicity_model(sentence)[0]
+            predictions = {res['label']: res['score'] for res in toxicity_results}
+            labels = {label: int(score >= TOXICITY_THRESHOLDS[label]) for label, score in predictions.items()}
+            
+            results.append({
+                "sentence": sentence,
+                "predictions": predictions,
+                "labels": labels
+            })
         except Exception as e:
             print(f"Error analyzing sentence '{sentence}': {e}")
     
     return results
 
 def generate_report(results):
+    """ Generate a CSV report with each toxicity category in a separate column. """
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     downloads_folder = "Downloads"
-    os.makedirs(downloads_folder, exist_ok=True)  # Ensure the folder exists
+    os.makedirs(downloads_folder, exist_ok=True)
     filename = f"analysis_report_{timestamp}.csv"
     csv_path = os.path.join(downloads_folder, filename)
-    
+
+    categories = TOXICITY_THRESHOLDS.keys()
+    structured_data = []
+
+    for result in results:
+        row = {"Sentence": result["sentence"]}
+        for category in categories:
+            row[f"{category}_score"] = result["predictions"].get(category, 0)
+            row[f"{category}_label"] = result["labels"].get(category, 0)
+        structured_data.append(row)
+
     try:
-        pd.DataFrame(results).to_csv(csv_path, index=False)
+        df = pd.DataFrame(structured_data)
+        df.to_csv(csv_path, index=False)
         return csv_path
     except Exception as e:
         print(f"Error saving report: {e}")
@@ -70,10 +93,11 @@ def generate_report(results):
 
 @app.route("/")
 def index():
-    return render_template("index.html") 
+    return render_template("index.html")
 
 @app.route("/process_existing", methods=["POST"])
 def process_existing():
+    """Handle file upload, transcription, and toxicity analysis"""
     if "file" not in request.files:
         return "No file part", 400
 
@@ -84,37 +108,68 @@ def process_existing():
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-        file.save(file_path)  # Save the newly uploaded file
+        file.save(file_path)  # Save the uploaded file
 
         # Process the uploaded file
         transcript = process_video(file_path)
         if not transcript:
             return "Error processing video", 500
 
+        # Analyze toxicity
         analysis_results = analyze_text(transcript)
         if not analysis_results:
             return "Error analyzing text", 500
 
+        # ✅ Debugging: Print the results to check if they are generated
+        print("Generated Analysis Results:", analysis_results)
+
+        # ✅ Save results to /static/ for the dashboard
+        analysis_results_path = os.path.join("static", "analysis_results.json")
+        with open(analysis_results_path, "w") as file:
+            json.dump(analysis_results, file, indent=4)
+
         report_path = generate_report(analysis_results)
-        if report_path:
-            report_filename = os.path.basename(report_path)
-            report_url = f"/download/{report_filename}"
-        else:
-            report_url = None
+        report_filename = os.path.basename(report_path) if report_path else None
+        report_url = f"/download/{report_filename}" if report_filename else None
 
         return render_template("results.html", message="Processing completed!", report_url=report_url, transcript=transcript)
-
+    
     return "Invalid file format", 400
 
 @app.route("/download/<filename>")
 def download_report(filename):
-    downloads_folder = "Downloads"  # Ensure this matches where reports are saved
+    downloads_folder = "Downloads"
     file_path = os.path.join(downloads_folder, filename)
     
     if os.path.exists(file_path):
         return send_file(file_path, as_attachment=True)
     else:
         return "File not found", 404
+
+@app.route("/dashboard")
+def dashboard():
+    try:
+        with open("analysis_results.json", "r") as file:
+            analysis_data = json.load(file)
+    except Exception as e:
+        print(f"Error loading analysis results: {e}")
+        analysis_data = []
+    
+    return render_template("dashboard.html", analysis_data=analysis_data)
+
+@app.route("/predict", methods=["POST"])
+def predict_toxicity():
+    data = request.get_json()
+    text = data.get("text", "")
+
+    if not text:
+        return jsonify({"error": "No text provided"}), 400
+
+    results = toxicity_model(text)[0]
+    predictions = {res['label']: res['score'] for res in results}
+    labels = {label: int(score >= TOXICITY_THRESHOLDS[label]) for label, score in predictions.items()}
+
+    return jsonify({"predictions": predictions, "labels": labels})
 
 if __name__ == "__main__":
     app.run(debug=True)
