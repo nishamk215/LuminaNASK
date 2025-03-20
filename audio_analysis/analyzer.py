@@ -59,7 +59,8 @@ def determine_toxicity_level(scores):
 def analyze_transcription_file(transcript_path):
     """
     Processes a single transcription file, runs analysis on each sentence,
-    saves the results to a CSV file, and returns the CSV file path.
+    and saves the results to an Excel file with two sheets:
+    one for toxicity classification and one for misinformation classification.
     """
     try:
         print(f"\n📄 Analyzing transcription: {transcript_path}")
@@ -86,20 +87,31 @@ def analyze_transcription_file(transcript_path):
                 classification_rows.append({
                     "sentence": sentence,
                     "toxicity_level": toxicity_result["classification"],
+                    "toxicity_scores": json.dumps(toxicity_result["toxicity_scores"]),
+                    "binary_labels": json.dumps(toxicity_result["binary_labels"]),
                     "predicted_label": predicted_label,
                     "xenophobic_score": candidate_scores.get("xenophobic language", 0),
                     "misinformation_score": candidate_scores.get("misinformation", 0),
-                    "neutral_score": candidate_scores.get("neutral", 0),
-                    "toxicity_scores": json.dumps(toxicity_result["toxicity_scores"]),
-                    "binary_labels": json.dumps(toxicity_result["binary_labels"]),
+                    "neutral_score": candidate_scores.get("neutral", 0)
                 })
 
         if classification_rows:
             df = pd.DataFrame(classification_rows)
-            csv_path = transcript_path.replace(".txt", "_classification.csv")
-            df.to_csv(csv_path, index=False, encoding="utf-8")
-            print(f"✅ Analysis results saved to: {csv_path}")
-            return csv_path
+
+            # Create separate DataFrames for toxicity and misinformation classification
+            toxicity_columns = ["sentence", "toxicity_level", "toxicity_scores", "binary_labels"]
+            misinformation_columns = ["sentence", "predicted_label", "xenophobic_score", "misinformation_score", "neutral_score"]
+
+            df_toxicity = df[toxicity_columns]
+            df_misinformation = df[misinformation_columns]
+
+            # Save both DataFrames to an Excel file with two sheets
+            excel_path = transcript_path.replace(".txt", "_classification.xlsx")
+            with pd.ExcelWriter(excel_path) as writer:
+                df_toxicity.to_excel(writer, sheet_name="Toxicity", index=False)
+                df_misinformation.to_excel(writer, sheet_name="Misinformation", index=False)
+            print(f"✅ Analysis results saved to: {excel_path}")
+            return excel_path
         else:
             print("No sentences to analyze.")
             return None
@@ -109,7 +121,7 @@ def analyze_transcription_file(transcript_path):
         return None
 
 def analyze_transcriptions():
-    """Loads transcriptions, analyzes them for harmful content, and saves results as CSV files."""
+    """Loads transcriptions, analyzes them for harmful content, and saves results as Excel files."""
     transcript_files = glob.glob(os.path.join(TRANSCRIPTIONS_DIRECTORY, "*.txt"))
     if not transcript_files:
         print("No transcription files found for analysis.")
@@ -117,3 +129,6 @@ def analyze_transcriptions():
 
     for transcript_file in transcript_files:
         analyze_transcription_file(transcript_file)
+
+if __name__ == "__main__":
+    analyze_transcriptions()
