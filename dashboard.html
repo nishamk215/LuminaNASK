@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toxicity Analysis Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">Video Analysis</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1 class="text-primary text-center" style="color: #1D2671;">Toxicity Analysis Dashboard</h1>
+        
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card p-3 text-center bg-light shadow-sm">
+                    <h5>Total Sentences Analyzed</h5>
+                    <h2 id="total-sentences" class="text-primary">0</h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-3 text-center bg-warning shadow-sm">
+                    <h5>Flagged Sentences</h5>
+                    <h2 id="flagged-sentences" class="text-dark">0</h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-3 text-center bg-danger shadow-sm text-white">
+                    <h5>Highest Toxicity Score</h5>
+                    <h2 id="highest-score">0</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h2 class="mt-4 text-center" style="color: #1D2671; font-size: 1.5rem;">Average Toxicity Scores</h2>
+                <canvas id="toxicityChart"></canvas>
+            </div>
+            <div class="col-md-6" style="max-width: 400px; margin: auto;">
+                <h2 class="mt-4 text-center" style="color: #1D2671; font-size: 1.5rem;">Toxicity Category Distribution</h2>
+                <canvas id="toxicityPieChart"></canvas>
+            </div>
+        </div>
+
+        <h2 class="mt-4" id="flagged-title" style="display:none; color: #1D2671; font-size: 1.5rem;">Flagged Sentences</h2>
+        <table class="table table-bordered mt-3" id="flagged-table" style="display:none;">
+            <thead class="table-danger">
+                <tr>
+                    <th>Sentence</th>
+                    <th>Highest Toxicity Category</th>
+                </tr>
+            </thead>
+            <tbody id="flagged-sentences-table"></tbody>
+        </table>
+
+        <style>
+            .highlight-toxic:hover {
+                background-color: #ffcccc !important;
+                color: red;
+                transition: background-color 0.3s ease-in-out;
+            }
+        </style>
+        </table>
+
+        <h2 class="mt-4" style="color: #1D2671; font-size: 1.5rem;">Detailed Analysis</h2>
+        <table class="table table-bordered mt-3">
+            <thead class="table-dark">
+                <tr>
+                    <th>Sentence</th>
+                    <th>Toxicity Scores</th>
+                </tr>
+            </thead>
+            <tbody id="analysis-table"></tbody>
+        </table>
+
+        <h2 class="mt-4" id="flagged-title" style="display:none; color: #1D2671; font-size: 1.5rem;">Flagged Sentences</h2>
+        <table class="table table-bordered mt-3" id="flagged-table" style="display:none;">
+            <thead class="table-danger">
+                <tr>
+                    <th>Sentence</th>
+                    <th>Highest Toxicity Category</th>
+                </tr>
+            </thead>
+            <tbody id="flagged-sentences-table"></tbody>
+        </table>
+    </div>
+
+    <script>
+        fetch("/static/analysis_results.json")
+            .then(response => response.json())
+            .then(analysisData => {
+                if (!analysisData || analysisData.length === 0) {
+                    document.getElementById("total-sentences").innerText = "0";
+                    document.getElementById("flagged-sentences").innerText = "0";
+                    document.getElementById("highest-score").innerText = "N/A";
+                    return;
+                }
+                
+                document.getElementById("total-sentences").innerText = analysisData.length;
+                const flagged = analysisData.filter(a => Object.values(a.labels).includes(1));
+                document.getElementById("flagged-sentences").innerText = flagged.length;
+                document.getElementById("highest-score").innerText = Math.max(...analysisData.map(a => Math.max(...Object.values(a.predictions)))).toFixed(2);
+                
+                const categories = Object.keys(analysisData[0].predictions);
+                const avgScores = categories.map(cat => {
+                    return analysisData.reduce((sum, a) => sum + a.predictions[cat], 0) / analysisData.length;
+                });
+
+                const ctx = document.getElementById("toxicityChart").getContext("2d");
+                new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: categories,
+                        datasets: [{
+                            label: "Average Toxicity Scores", options: { plugins: { title: { display: true, text: "Average Toxicity Scores", font: { size: 18, family: "Arial", weight: "bold" }, color: "#1D2671" } } },
+                            data: avgScores,
+                            backgroundColor: "#1D2671",
+                        }]
+                    }
+                });
+                
+                const ctxPie = document.getElementById("toxicityPieChart").getContext("2d");
+                new Chart(ctxPie, {
+                    options: {
+                        plugins: {
+                            datalabels: {
+                                color: '#fff',
+                                font: { size: 16, weight: 'bold' },
+                                formatter: (value, ctx) => {
+                                    let dataset = ctx.chart.data.datasets[0].data;
+                                    let total = dataset.reduce((acc, val) => acc + val, 0);
+                                    let percentage = ((value / total) * 100).toFixed(1);
+                                    return dataset.sort((a, b) => b - a).slice(0, 3).includes(value) ? `${percentage}%` : '';
+                                }
+                            }
+                        }
+                    },
+                    type: "pie",
+                    data: {
+                        labels: categories,
+                        datasets: [{
+                            label: "Toxicity Distribution", options: { plugins: { title: { display: true, text: "Toxicity Category Distribution", font: { size: 18, family: "Arial", weight: "bold" }, color: "#1D2671" } } },
+                            data: avgScores,
+                            backgroundColor: ["#FF5733", "#C70039", "#900C3F", "#581845", "#1D2671", "#009688"]
+                        }]
+                    }
+                });
+                
+                const table = document.getElementById("analysis-table");
+                analysisData.forEach(a => {
+                    const row = table.insertRow();
+                    row.insertCell(0).innerText = a.sentence;
+                    row.insertCell(1).innerText = JSON.stringify(a.predictions, null, 2);
+                });
+                
+                if (flagged.length > 0) {
+                    document.getElementById("flagged-title").style.display = "block";
+                    document.getElementById("flagged-table").style.display = "table";
+
+                    const flaggedTable = document.getElementById("flagged-sentences-table");
+                    flagged.forEach(a => {
+                        const highestCategory = Object.entries(a.predictions).reduce((max, curr) => curr[1] > max[1] ? curr : max);
+                        const row = flaggedTable.insertRow();
+                        row.insertCell(0).innerText = a.sentence;
+                        row.insertCell(1).innerText = highestCategory[0];
+                    });
+                }
+            })
+            .catch(error => console.error("Error loading analysis results:", error));
+    </script>
+</body>
+</html>
