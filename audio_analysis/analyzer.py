@@ -39,12 +39,12 @@ def classify_toxicity(text):
 def determine_toxicity_level(scores):
     """Classifies text into NONE, MILD, HIGH, or MAX based on toxicity levels."""
     thresholds = {
-        "toxic": 0.8,
-        "severe_toxic": 0.5,
-        "obscene": 0.7,
-        "threat": 0.5,
-        "insult": 0.75,
-        "identity_hate": 0.6
+    "toxic": 0.3,
+    "severe_toxic": 0.3,
+    "obscene": 0.3,
+    "threat": 0.3,
+    "insult": 0.3,
+    "identity_hate": 0.3
     }
     severity_count = sum(1 for label, score in scores.items() if score >= thresholds.get(label, 0))
     if severity_count == 0:
