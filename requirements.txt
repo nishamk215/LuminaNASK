@@ -1,0 +1,10 @@
+flask
+transformers
+torch
+pandas
+nltk
+openai-whisper
+ffmpeg-python
+docx2txt
+PyPDF2
+
