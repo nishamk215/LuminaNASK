@@ -8,6 +8,8 @@ from nltk.tokenize import sent_tokenize
 from datetime import datetime
 import pandas as pd
 from transformers import pipeline  # Integrated toxicity model directly
+import docx2txt
+from PyPDF2 import PdfReader
 
 # Flask app setup
 app = Flask(__name__)
@@ -30,11 +32,35 @@ TOXICITY_THRESHOLDS = {
     "identity_hate": 0.5
 }
 
-ALLOWED_EXTENSIONS = {"mp4", "avi", "mov"}
+ALLOWED_EXTENSIONS = {".wav",".mp3", ".flac", "mp4", "avi", "mov", "pdf", "docx", "xlsx", "txt"}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def transcribe_file(file_path):
+    extension = os.path.splitext(file_path)[1].lower()
+    
+    try:
+        if extension in [".mp3", ".wav", ".flac", ".mp4", ".avi", ".mov"]:
+            return whisper_model.transcribe(file_path)["text"]
+
+        elif extension == ".txt":
+            with open(file_path, "r", encoding="utf-8") as f:
+                return f.read()
+
+        elif extension == ".docx":
+            return docx2txt.process(file_path)
+
+        elif extension == ".pdf":
+            reader = PdfReader(file_path)
+            return "\n".join(page.extract_text() for page in reader.pages if page.extract_text())
+
+        else:
+            return None  # Unsupported format
+    except Exception as e:
+        print(f"Error reading file: {e}")
+        return None
+    
 def process_video(video_path):
     """ Transcribe video file using Whisper model """
     try:
@@ -111,7 +137,7 @@ def process_existing():
         file.save(file_path)  # Save the uploaded file
 
         # Process the uploaded file
-        transcript = process_video(file_path)
+        transcript = transcribe_file(file_path) 
         if not transcript:
             return "Error processing video", 500
 
@@ -173,3 +199,4 @@ def predict_toxicity():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
