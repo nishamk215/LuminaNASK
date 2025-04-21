@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{{ source_type }} Analysis Results</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="{{ url_for('audio.index') }}">Multi‑Modal Analysis</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('audio.upload_audio') }}"
+              >Upload Audio</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('audio.select_file') }}"
+              >Select Audio</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('audio.text_upload') }}"
+              >Upload Text</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('audio.analyze') }}"
+              >Excel Export</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <h2 class="text-center">{{ source_type }} Analysis</h2>
+
+    <h5>Original Text</h5>
+    <pre class="p-3 border bg-light">{{ original }}</pre>
+
+    <h5>Translated Text (English)</h5>
+    <pre class="p-3 border bg-light">{{ translated }}</pre>
+
+    <h5>Toxicity Scores</h5>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Label</th>
+          <th>Score</th>
+          <th>Flagged?</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for lbl, score in predictions.items() %}
+        <tr>
+          <td>{{ lbl }}</td>
+          <td>{{ '%.2f'|format(score) }}</td>
+          <td>{{ labels[lbl] and '✅' or '❌' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% if transcription_filename %}
+    <div class="text-center mt-4">
+      <a
+        href="{{ url_for('audio.analyze', transcription=transcription_filename) }}"
+        class="btn btn-outline-primary"
+      >
+        Download Full Excel Report
+      </a>
+    </div>
+    {% endif %}
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
