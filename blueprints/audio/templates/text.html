@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Upload Document for Analysis</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="{{ url_for('audio.index') }}">Audio/Text Analysis</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('audio.upload_audio') }}">Upload Audio</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('audio.select_file') }}">Select Audio</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('audio.analyze') }}">Analyze Files</a></li>
+          <li class="nav-item"><a class="nav-link active" href="{{ url_for('audio.text_upload') }}">Upload Document</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Document Upload Form -->
+  <div class="container mt-5">
+    <h2 class="text-center">Upload a Document</h2>
+    <p class="text-center">
+      Supported formats: <strong>.txt, .pdf, .docx</strong>
+    </p>
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <form
+          action="{{ url_for('audio.text_upload') }}"
+          method="post"
+          enctype="multipart/form-data"
+          class="p-4 border rounded bg-light"
+        >
+          <div class="mb-3">
+            <label for="file" class="form-label">Choose your document:</label>
+            <input
+              type="file"
+              class="form-control"
+              name="file"
+              id="file"
+              accept=".txt,.pdf,.docx"
+              required
+            >
+          </div>
+          <button type="submit" class="btn btn-success w-100">
+            Upload & Analyze
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
