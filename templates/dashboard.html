@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dynamic Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  <style>
+    .tabs { display: flex; gap: 10px; margin: 30px 0 10px; }
+    .tab-button {
+      padding: 10px 20px;
+      cursor: pointer;
+      background: #f1f1f1;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .tab-button.active {
+      background-color: #1D2671;
+      color: white;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">Video Analysis</a>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+        <li class="nav-item"><a class="nav-link active" href="/dashboard">Dashboard</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container mt-4">
+    <h1 class="text-center text-primary">Dynamic Dashboard</h1>
+
+    <!-- Tabs -->
+    <div class="tabs justify-content-center">
+      <div class="tab-button active" onclick="showTab('toxicity')">Toxicity</div>
+      <div class="tab-button" onclick="showTab('misinformation')">Misinformation</div>
+    </div>
+
+    <!-- Toxicity Tab -->
+    <div id="toxicity" class="tab-content active">
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <div class="card p-3 text-center bg-light shadow-sm">
+            <h5>Total Sentences Analyzed</h5>
+            <h2 id="total-sentences" class="text-primary">0</h2>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card p-3 text-center bg-warning shadow-sm">
+            <h5>Flagged Sentences</h5>
+            <h2 id="flagged-sentences" class="text-dark">0</h2>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card p-3 text-center bg-danger shadow-sm text-white">
+            <h5>Highest Toxicity Score</h5>
+            <h2 id="highest-score">0</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <h2 class="mt-4 text-center text-primary" style="font-size: 1.5rem;">Average Toxicity Scores</h2>
+          <canvas id="toxicityChart"></canvas>
+        </div>
+        <div class="col-md-6" style="max-width: 400px; margin: auto;">
+          <h2 class="mt-4 text-center text-primary" style="font-size: 1.5rem;">Toxicity Category Distribution</h2>
+          <canvas id="toxicityPieChart"></canvas>
+        </div>
+      </div>
+
+      <h2 class="mt-4 text-primary" id="flagged-title" style="display:none; font-size: 1.5rem;">Flagged Sentences</h2>
+      <table class="table table-bordered mt-3" id="flagged-table" style="display:none;">
+        <thead class="table-danger">
+          <tr>
+            <th>Sentence</th>
+            <th>Highest Toxicity Category</th>
+          </tr>
+        </thead>
+        <tbody id="flagged-sentences-table"></tbody>
+      </table>
+
+      <h2 class="mt-4 text-primary" style="font-size: 1.5rem;">Detailed Analysis</h2>
+      <table class="table table-bordered mt-3">
+        <thead class="table-dark">
+          <tr>
+            <th>Sentence</th>
+            <th>Toxicity Scores</th>
+          </tr>
+        </thead>
+        <tbody id="analysis-table"></tbody>
+      </table>
+    </div>
+
+    <!-- Misinformation Tab -->
+<!-- Misinformation Tab -->
+<div id="misinformation" class="tab-content">
+    <div class="row mt-4">
+      <div class="col-md-4">
+        <div class="card p-3 text-center bg-light shadow-sm">
+          <h5>Total Sentences</h5>
+          <h2 id="misinfo-total" class="text-primary">0</h2>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-3 text-center bg-warning shadow-sm">
+          <h5>Most Xenophobic Sentence</h5>
+          <h6 id="most-xeno" class="text-dark"></h6>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-3 text-center bg-info shadow-sm text-white">
+          <h5>Highest Misinformation Score</h5>
+          <h2 id="highest-misinfo-score">0</h2>
+        </div>
+      </div>
+    </div>
+  
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <h2 class="mt-4 text-center text-primary" style="font-size: 1.5rem;">Misinformation Category Averages</h2>
+        <canvas id="misinformationPieChart"></canvas>
+      </div>
+      <div class="col-md-6">
+        <h2 class="mt-4 text-center text-primary" style="font-size: 1.5rem;">Sentence-Level Breakdown</h2>
+        <canvas id="misinformationChart" height="500"></canvas>
+      </div>
+    </div>
+  </div>
+  
+
+  <script>
+    function showTab(tabId) {
+      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(div => div.classList.remove('active'));
+      document.querySelector(`.tab-button[onclick*="${tabId}"]`).classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+  
+    fetch("/static/analysis_results.json")
+      .then(response => response.json())
+      .then(analysisData => {
+        if (!analysisData || analysisData.length === 0) return;
+  
+        // ========== TOXICITY ==========
+        document.getElementById("total-sentences").innerText = analysisData.length;
+  
+        const flagged = analysisData.filter(a => Object.values(a.labels).includes(1));
+        document.getElementById("flagged-sentences").innerText = flagged.length;
+  
+        const highestScore = Math.max(...analysisData.map(a => Math.max(...Object.values(a.predictions))));
+        document.getElementById("highest-score").innerText = highestScore.toFixed(2);
+  
+        const toxicityCategories = Object.keys(analysisData[0].predictions);
+        const avgToxicity = toxicityCategories.map(cat =>
+          analysisData.reduce((sum, a) => sum + a.predictions[cat], 0) / analysisData.length
+        );
+  
+        new Chart(document.getElementById("toxicityChart"), {
+          type: "bar",
+          data: {
+            labels: toxicityCategories,
+            datasets: [{
+              label: "Average Toxicity Scores",
+              data: avgToxicity,
+              backgroundColor: "#1D2671"
+            }]
+          }
+        });
+  
+        new Chart(document.getElementById("toxicityPieChart"), {
+          type: "pie",
+          data: {
+            labels: toxicityCategories,
+            datasets: [{
+              data: avgToxicity,
+              backgroundColor: ["#FF5733", "#C70039", "#900C3F", "#581845", "#1D2671", "#009688"]
+            }]
+          },
+          options: {
+            plugins: {
+              datalabels: {
+                color: '#fff',
+                font: { size: 16, weight: 'bold' },
+                formatter: (value, ctx) => {
+                  let dataset = ctx.chart.data.datasets[0].data;
+                  let total = dataset.reduce((acc, val) => acc + val, 0);
+                  let percentage = ((value / total) * 100).toFixed(1);
+                  return dataset.sort((a, b) => b - a).slice(0, 3).includes(value) ? `${percentage}%` : '';
+                }
+              }
+            }
+          }
+        });
+  
+        const analysisTable = document.getElementById("analysis-table");
+        analysisData.forEach(a => {
+          const row = analysisTable.insertRow();
+          row.insertCell(0).innerText = a.sentence;
+          row.insertCell(1).innerText = JSON.stringify(a.predictions, null, 2);
+        });
+  
+        if (flagged.length > 0) {
+          document.getElementById("flagged-title").style.display = "block";
+          document.getElementById("flagged-table").style.display = "table";
+          const flaggedTable = document.getElementById("flagged-sentences-table");
+          flagged.forEach(a => {
+            const highestCategory = Object.entries(a.predictions).reduce((max, curr) =>
+              curr[1] > max[1] ? curr : max
+            );
+            const row = flaggedTable.insertRow();
+            row.insertCell(0).innerText = a.sentence;
+            row.insertCell(1).innerText = highestCategory[0];
+          });
+        }
+  
+        // ========== MISINFORMATION ==========
+        document.getElementById("misinfo-total").innerText = analysisData.length;
+  
+        const highestXeno = analysisData.reduce((prev, curr) =>
+          (curr.misinformation?.xenophobic || 0) > (prev.misinformation?.xenophobic || 0) ? curr : prev
+        );
+        document.getElementById("most-xeno").innerText = highestXeno.sentence;
+  
+        const maxMisinfoScore = Math.max(...analysisData.map(d => d.misinformation?.misinformation || 0));
+        document.getElementById("highest-misinfo-score").innerText = maxMisinfoScore.toFixed(2);
+  
+        const labels = analysisData.map(d => d.sentence);
+        const xenophobic = analysisData.map(d => d.misinformation?.xenophobic || 0);
+        const misinformation = analysisData.map(d => d.misinformation?.misinformation || 0);
+        const neutral = analysisData.map(d => d.misinformation?.neutral || 0);
+  
+        const avgXeno = xenophobic.reduce((a, b) => a + b, 0) / xenophobic.length;
+        const avgMisinfo = misinformation.reduce((a, b) => a + b, 0) / misinformation.length;
+        const avgNeutral = neutral.reduce((a, b) => a + b, 0) / neutral.length;
+  
+        new Chart(document.getElementById("misinformationPieChart"), {
+          type: "pie",
+          data: {
+            labels: ["Xenophobic", "Misinformation", "Neutral"],
+            datasets: [{
+              data: [avgXeno, avgMisinfo, avgNeutral],
+              backgroundColor: ["#FF6384", "#FF9F40", "#36A2EB"]
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'top' },
+              title: {
+                display: true,
+                text: 'Average Misinformation Composition'
+              }
+            }
+          }
+        });
+  
+        new Chart(document.getElementById("misinformationChart").getContext("2d"), {
+          type: "bar",
+          data: {
+            labels: labels,
+            datasets: [
+              { label: "Xenophobic", data: xenophobic, backgroundColor: "rgba(255, 99, 132, 0.7)" },
+              { label: "Misinformation", data: misinformation, backgroundColor: "rgba(255, 159, 64, 0.7)" },
+              { label: "Neutral", data: neutral, backgroundColor: "rgba(75, 192, 192, 0.7)" }
+            ]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            plugins: {
+              title: {
+                display: true,
+                text: 'Misinformation Scores per Sentence',
+                font: { size: 18 },
+                color: '#1D2671'
+              },
+              legend: { position: 'top' }
+            },
+            scales: {
+              x: { stacked: true, min: 0, max: 1 },
+              y: { stacked: true, ticks: { autoSkip: true, maxTicksLimit: 15 } }
+            }
+          }
+        });
+      })
+      .catch(error => console.error("Error loading analysis results:", error));
+  </script>
+  
+</body>
+</html>

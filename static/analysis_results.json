@@ -1,0 +1,410 @@
+[
+  {
+    "sentence": "Good evening.",
+    "predictions": {
+      "identity_hate": 0.0001419142645318061,
+      "insult": 0.00018369837198406458,
+      "obscene": 0.0001883831573650241,
+      "severe_toxic": 0.000128411382320337,
+      "threat": 0.00012520384916570038,
+      "toxic": 0.0006022384623065591
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.10811464488506317,
+      "misinformation": 0.11811338365077972,
+      "neutral": 0.7737720012664795
+    }
+  },
+  {
+    "sentence": "Tonight, we examine the Carlisle Indian Industrial School and its role in addressing the so-called Indian problem.",
+    "predictions": {
+      "identity_hate": 0.0001538722572149709,
+      "insult": 0.0001721761072985828,
+      "obscene": 0.0001779601734597236,
+      "severe_toxic": 0.0001263235608348623,
+      "threat": 0.00012671382864937186,
+      "toxic": 0.0005938719841651618
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.7719857692718506,
+      "misinformation": 0.184424489736557,
+      "neutral": 0.04358971491456032
+    }
+  },
+  {
+    "sentence": "As the US expands, Native tribes resist assimilation, clinging to their traditions.",
+    "predictions": {
+      "identity_hate": 0.00018546874343883246,
+      "insult": 0.0001889318082248792,
+      "obscene": 0.00016818912990856916,
+      "severe_toxic": 0.00013174014748074114,
+      "threat": 0.0001366770884487778,
+      "toxic": 0.0007136684725992382
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.3100324273109436,
+      "misinformation": 0.31113535165786743,
+      "neutral": 0.37883228063583374
+    }
+  },
+  {
+    "sentence": "Carlisle, led by General Richard Henry Pratt, aims to transform Native youth by erasing their tribal identities and instilling American values.",
+    "predictions": {
+      "identity_hate": 0.00017431813466828316,
+      "insult": 0.00020270129607524723,
+      "obscene": 0.00017052901966962963,
+      "severe_toxic": 0.00012642840738408267,
+      "threat": 0.00014100552652962506,
+      "toxic": 0.0007525470573455095
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.4593915343284607,
+      "misinformation": 0.33518311381340027,
+      "neutral": 0.2054254114627838
+    }
+  },
+  {
+    "sentence": "Pratt argues that native cultures are outdated, fostering superstition and idleness.",
+    "predictions": {
+      "identity_hate": 0.0004920343635603786,
+      "insult": 0.0004980706726200879,
+      "obscene": 0.0002307417889824137,
+      "severe_toxic": 0.00010776227281894535,
+      "threat": 0.0001366501091979444,
+      "toxic": 0.008874387480318546
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.7613479495048523,
+      "misinformation": 0.1682295799255371,
+      "neutral": 0.07042244076728821
+    }
+  },
+  {
+    "sentence": "Carlisle removes children from their communities to break their connection to tribal traditions, teaching them English, American history, and Christianity.",
+    "predictions": {
+      "identity_hate": 0.0002484204596839845,
+      "insult": 0.000285710470052436,
+      "obscene": 0.00015450725913979113,
+      "severe_toxic": 9.891522495308891e-05,
+      "threat": 0.00011969521438004449,
+      "toxic": 0.0024734477046877146
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.3044578433036804,
+      "misinformation": 0.28758203983306885,
+      "neutral": 0.40796005725860596
+    }
+  },
+  {
+    "sentence": "The school enforces discipline through strict military style routines, replacing perceived disorder with structure and productivity.",
+    "predictions": {
+      "identity_hate": 0.00014848678256385028,
+      "insult": 0.00018778291996568441,
+      "obscene": 0.0001653737563174218,
+      "severe_toxic": 0.00011890549649251625,
+      "threat": 0.00013156239583622664,
+      "toxic": 0.000703988189343363
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.2703459560871124,
+      "misinformation": 0.2124083787202835,
+      "neutral": 0.5172457098960876
+    }
+  },
+  {
+    "sentence": "Boys are trained in carpentry, farming, and blacksmithing, while girls learn domestic skills to integrate into American households.",
+    "predictions": {
+      "identity_hate": 0.0002564156020525843,
+      "insult": 0.00033699971390888095,
+      "obscene": 0.00016131905431393534,
+      "severe_toxic": 0.0001280501892324537,
+      "threat": 0.00014399173960555345,
+      "toxic": 0.0015626774402335286
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.15599176287651062,
+      "misinformation": 0.36382409930229187,
+      "neutral": 0.4801841676235199
+    }
+  },
+  {
+    "sentence": "Supporters believe this education saves Native children from a life of ignorance, replacing their customs with the principles of faith, hard work, and respect for law.",
+    "predictions": {
+      "identity_hate": 0.0004621284897439182,
+      "insult": 0.0005883373087272048,
+      "obscene": 0.0002064701111521572,
+      "severe_toxic": 0.00010472607391420752,
+      "threat": 0.0001727409689920023,
+      "toxic": 0.00862029381096363
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.2878071069717407,
+      "misinformation": 0.23392823338508606,
+      "neutral": 0.4782646596431732
+    }
+  },
+  {
+    "sentence": "Carlisle's mission aligns with Manifest Destiny the belief that America has the right and duty to civilize the continent.",
+    "predictions": {
+      "identity_hate": 0.00015477827400900424,
+      "insult": 0.00017517339438199997,
+      "obscene": 0.00017104165453929454,
+      "severe_toxic": 0.00012853780935984105,
+      "threat": 0.00013738803681917489,
+      "toxic": 0.0005914799985475838
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.6899980306625366,
+      "misinformation": 0.1798127293586731,
+      "neutral": 0.13018925487995148
+    }
+  },
+  {
+    "sentence": "By assimilating Native youth, the school aims to eliminate cultural resistance and prepare them for life in a rapidly modernizing society.",
+    "predictions": {
+      "identity_hate": 0.00033292564330622554,
+      "insult": 0.00036460900446400046,
+      "obscene": 0.00017605535686016083,
+      "severe_toxic": 0.00015190667181741446,
+      "threat": 0.00018668391567189246,
+      "toxic": 0.001472598291002214
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.28177326917648315,
+      "misinformation": 0.31309497356414795,
+      "neutral": 0.4051317572593689
+    }
+  },
+  {
+    "sentence": "Critics from native communities argue that the school erases heritage, but its advocates dismiss these concerns, viewing native traditions as primitive and obstructive to progress.",
+    "predictions": {
+      "identity_hate": 0.00019143824465572834,
+      "insult": 0.00020424909598659724,
+      "obscene": 0.0001535298943053931,
+      "severe_toxic": 0.00010977005877066404,
+      "threat": 0.00011339742923155427,
+      "toxic": 0.001112789730541408
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.20439833402633667,
+      "misinformation": 0.5002275109291077,
+      "neutral": 0.29537415504455566
+    }
+  },
+  {
+    "sentence": "Supporters envision a future where native people are fully integrated, their customs forgotten in favor of American values.",
+    "predictions": {
+      "identity_hate": 0.00019046779198106378,
+      "insult": 0.00019852652621921152,
+      "obscene": 0.00016750286158639938,
+      "severe_toxic": 0.0001308074570260942,
+      "threat": 0.00014683144399896264,
+      "toxic": 0.0007594230701215565
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.47258856892585754,
+      "misinformation": 0.2140134572982788,
+      "neutral": 0.31339797377586365
+    }
+  },
+  {
+    "sentence": "They see Carlisle not just as a school, but as a crucial tool for ensuring national unity and eliminating tribal divisions.",
+    "predictions": {
+      "identity_hate": 0.00015741509560029954,
+      "insult": 0.0001823871280066669,
+      "obscene": 0.00017238307918887585,
+      "severe_toxic": 0.000133488341816701,
+      "threat": 0.00014079350512474775,
+      "toxic": 0.0005785975372418761
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.24362820386886597,
+      "misinformation": 0.21207667887210846,
+      "neutral": 0.5442951321601868
+    }
+  },
+  {
+    "sentence": "While some mourn the loss of native traditions, Carlisle's proponents argue that this transformation is necessary for both the students and the nation.",
+    "predictions": {
+      "identity_hate": 0.00015401052951347083,
+      "insult": 0.00018465949688106775,
+      "obscene": 0.00016512273577973247,
+      "severe_toxic": 0.00011950133193749934,
+      "threat": 0.00012702499225270003,
+      "toxic": 0.0007179732783697546
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.24024799466133118,
+      "misinformation": 0.24792630970478058,
+      "neutral": 0.511825680732727
+    }
+  },
+  {
+    "sentence": "In their view, the school offers native youth a chance to abandon a savage past and embrace the future as disciplined, productive citizens of the greatest nation on earth.",
+    "predictions": {
+      "identity_hate": 0.0001824774080887437,
+      "insult": 0.00021073673269711435,
+      "obscene": 0.00016195111675187945,
+      "severe_toxic": 0.0001238693221239373,
+      "threat": 0.0001408915559295565,
+      "toxic": 0.0008222116157412529
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.5069395899772644,
+      "misinformation": 0.25679656863212585,
+      "neutral": 0.23626385629177094
+    }
+  },
+  {
+    "sentence": "Thank you for joining us.",
+    "predictions": {
+      "identity_hate": 0.00015435086970683187,
+      "insult": 0.00018256023759022355,
+      "obscene": 0.00019806934869848192,
+      "severe_toxic": 0.0001480322825955227,
+      "threat": 0.00014627834025304765,
+      "toxic": 0.0005045713041909039
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.17328624427318573,
+      "misinformation": 0.15926028788089752,
+      "neutral": 0.6674534678459167
+    }
+  }
+]
