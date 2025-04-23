@@ -28,14 +28,22 @@ hf_translator = pipeline(
 )
 
 def translate_to_english(text: str) -> str:
-    """Translate text into English, chunk by chunk."""
-    out = []
-    for chunk in chunk_text(text, chunk_size=4000):
+    """
+    Translate arbitrary‐length text into English by:
+      1. Splitting it into ~400‐char chunks (to avoid >512 token errors)
+      2. Running each chunk through the Marian model with max_length=500
+    """
+    out_chunks = []
+    for chunk in chunk_text(text, chunk_size=400):
         try:
-            out.append(hf_translator(chunk)[0]["translation_text"])
-        except Exception:
-            out.append(chunk)
-    return " ".join(out)
+            translated = hf_translator(chunk, max_length=500)[0]["translation_text"]
+            out_chunks.append(translated)
+        except Exception as e:
+            # Log the error and fall back to the original chunk
+            print(f"⚠️ translation failed for chunk (len={len(chunk)}): {e}")
+            out_chunks.append(chunk)
+    return " ".join(out_chunks)
+
 
 # ─── Toxicity Classifier ────────────────────────────────────────────────────
 
