@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Analyze Transcription – LuminaNASK{% endblock %}
+{% set active = 'analyze' %}
+
+{% block content %}
+  <h2 class="text-center">Select a Transcription for Analysis</h2>
+  <div class="row justify-content-center mt-4">
+    <div class="col-md-6">
+      <form 
+        action="{{ url_for('audio.analyze') }}" 
+        method="post" 
+        class="p-4 border rounded bg-light"
+      >
+        <div class="mb-3">
+          <label for="transcription" class="form-label">Choose a transcription file:</label>
+          <select 
+            class="form-select" 
+            name="transcription" 
+            id="transcription" 
+            required
+          >
+            {% for file in transcriptions %}
+              <option value="{{ file }}">{{ file }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-success w-100">Analyze</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{# templates/select.html #}
+{% extends "base.html" %}
+
+{% block title %}Select Audio File — LuminaNASK{% endblock %}
+{% set active = "select" %}
+
+{% block content %}
+  <h2 class="text-center mt-5">Select an Audio File to Transcribe</h2>
+  <form 
+    action="{{ url_for('audio.transcribe') }}" 
+    method="post" 
+    class="p-4 border rounded bg-light mx-auto" 
+    style="max-width: 500px;"
+  >
+    <div class="mb-3">
+      <label for="selected_file" class="form-label">Choose a file:</label>
+      <select 
+        class="form-select" 
+        name="selected_file" 
+        id="selected_file"
+        required
+      >
+        {% for file in files %}
+          <option value="{{ file }}">{{ file }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-success w-100">Transcribe</button>
+  </form>
+{% endblock %}
