@@ -1,0 +1,46 @@
+{# templates/results.html #}
+{% extends "base.html" %}
+
+{% block title %}{{ source_type }} Analysis Results — LuminaNASK{% endblock %}
+{% set active = "analyze" %}
+
+{% block content %}
+  <h2 class="text-center">{{ source_type }} Analysis</h2>
+
+  <h5>Original Text</h5>
+  <pre class="p-3 border bg-light">{{ original }}</pre>
+
+  <h5>Translated Text (English)</h5>
+  <pre class="p-3 border bg-light">{{ translated }}</pre>
+
+  <h5>Toxicity Scores</h5>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Label</th>
+        <th>Score</th>
+        <th>Flagged?</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for lbl, score in predictions.items() %}
+      <tr>
+        <td>{{ lbl }}</td>
+        <td>{{ '%.2f'|format(score) }}</td>
+        <td>{{ labels[lbl] and '✅' or '❌' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% if transcription_filename %}
+  <div class="text-center mt-4">
+    <a
+      href="{{ url_for('audio.analyze', transcription=transcription_filename) }}"
+      class="btn btn-outline-primary"
+    >
+      Download Full Excel Report
+    </a>
+  </div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Analysis Completed – LuminaNASK{% endblock %}
+{% set active = 'analyze' %}
+
+{% block content %}
+  <div class="text-center mt-5">
+    <div class="alert alert-success" role="alert">
+      <h4 class="alert-heading">✅ Analysis Completed!</h4>
+      <p>Your transcription has been successfully analyzed.</p>
+      <hr>
+      <p class="mb-0">
+        Check the <strong>transcriptions</strong> folder for the results.
+      </p>
+    </div>
+    <a href="{{ url_for('audio.index') }}" class="btn btn-primary mt-3">Back to Home</a>
+    <a href="{{ url_for('audio.analyze') }}" class="btn btn-secondary mt-3">Analyze Another File</a>
+  </div>
+{% endblock %}
