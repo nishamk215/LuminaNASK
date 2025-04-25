@@ -22,10 +22,14 @@
           <li class="nav-item">
             <a class="nav-link {% if active=='audio' %}active{% endif %}"
                href="{{ url_for('audio.audio') }}">Audio</a>
-          </li>          
+          </li> 
+          <li class="nav-item">
+            <a class="nav-link {% if active=='video' %}active{% endif %}"
+               href="{{ url_for('audio.video_upload') }}">Video</a>
+          </li>         
           <li class="nav-item">
             <a class="nav-link {% if active=='text' %}active{% endif %}" 
-               href="{{ url_for('audio.text_upload') }}">Upload Document</a>
+               href="{{ url_for('audio.text_upload') }}"> Document</a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if active=='analyze' %}active{% endif %}" 

@@ -1,4 +1,3 @@
-# blueprints/audio/routes.py
 
 import os
 from flask import (
@@ -12,6 +11,7 @@ from docx import Document     # python-docx for .docx extraction
 
 from transcriber import transcribe_single_audio
 from analyzer    import analyze_transcription_file
+from moviepy.video.io.VideoFileClip import VideoFileClip
 
 audio_bp = Blueprint("audio", __name__, template_folder="templates")
 
@@ -43,6 +43,18 @@ def translate_to_english(text: str) -> str:
             print(f"⚠️ translation failed for chunk (len={len(chunk)}): {e}")
             out_chunks.append(chunk)
     return " ".join(out_chunks)
+
+def extract_audio_from_video(video_path: str) -> str:
+    """
+    Given a video file, extract its audio track into an .mp3
+    and return the new audio path.
+    """
+    base, _ = os.path.splitext(video_path)
+    audio_path = f"{base}.mp3"
+    clip = VideoFileClip(video_path)
+    clip.audio.write_audiofile(audio_path)
+    clip.close()
+    return audio_path
 
 
 # ─── Toxicity Classifier ────────────────────────────────────────────────────
@@ -215,6 +227,53 @@ def predict_toxicity():
         }
     except Exception as e:
         return {"error": str(e)}, 500
+    
+
+
+# ─── Video Upload & Analysis ─────────────────────────────────────────────────
+@audio_bp.route("/video", methods=["GET","POST"])
+def video_upload():
+    """
+    Combined upload → extract audio → transcribe → translate → classify → Excel download
+    """
+    if request.method == "POST":
+        # 1) Save the uploaded video
+        f = request.files.get("file")
+        if not f or not f.filename:
+            return "Please upload a video file", 400
+
+        fn         = secure_filename(f.filename)
+        video_path = os.path.join(current_app.config["UPLOAD_FOLDER"], fn)
+        f.save(video_path)
+
+        # 2) Extract audio track
+        audio_path = extract_audio_from_video(video_path)
+
+        # 3) Transcribe
+        raw_path = transcribe_single_audio(audio_path)
+        if not raw_path:
+            return "Transcription failed", 500
+
+        # 4) Read & translate
+        raw_text = open(raw_path, "r", encoding="utf-8").read().strip()
+        en_text  = translate_to_english(raw_text)
+
+        # 5) Save English‐only transcript
+        base    = os.path.splitext(os.path.basename(raw_path))[0]
+        en_fn   = f"{base}_en.txt"
+        en_path = os.path.join(current_app.config["TRANSCRIPTIONS_FOLDER"], en_fn)
+        with open(en_path, "w", encoding="utf-8") as outf:
+            outf.write(en_text)
+
+        # 6) Run Excel analysis (two sheets) and send it
+        xlsx = analyze_transcription_file(en_path)
+        if xlsx and os.path.exists(xlsx):
+            return send_file(xlsx, as_attachment=True)
+        return "Analysis failed", 500
+
+    # GET → show a simple video upload form
+    return render_template("video.html", active="video")
+
 
 # ─── Text Upload & Analysis ─────────────────────────────────────────────────
 
@@ -225,12 +284,12 @@ def text_upload():
         if not f or not f.filename:
             return "Please upload a file", 400
 
-        # 1) save upload
-        fn    = secure_filename(f.filename)
+        # 1) save the upload
+        fn = secure_filename(f.filename)
         upath = os.path.join(current_app.config["UPLOAD_FOLDER"], fn)
         f.save(upath)
 
-        # 2) extract raw text
+        # 2) extract raw_text
         ext = fn.rsplit(".", 1)[1].lower()
         try:
             if ext == "txt":
@@ -250,21 +309,27 @@ def text_upload():
         # 3) translate to English
         en_text = translate_to_english(raw_text)
 
-        # 4) save the English transcript for analysis
-        base    = os.path.splitext(fn)[0]
-        en_fn   = f"{base}_en.txt"
+        # 4) save the English transcript for later analysis
+        base = os.path.splitext(fn)[0]
+        en_fn = f"{base}_en.txt"
         en_path = os.path.join(current_app.config["TRANSCRIPTIONS_FOLDER"], en_fn)
         with open(en_path, "w", encoding="utf-8") as outf:
             outf.write(en_text)
 
-        # 5) run the full per‑sentence analysis  
-        #     (splits on punctuation, classifies toxicity + zero‑shot labels)
-        xlsx = analyze_transcription_file(en_path)
-        if xlsx and os.path.exists(xlsx):
-            # force download of the two-sheet Excel
-            return send_file(xlsx, as_attachment=True)
+        # 5) classify toxicity (so we can show the same table as audio)
+        preds, bins = classify_toxicity(en_text)
 
-        return "Analysis failed", 500
+        # 6) render the same results page you use for audio
+        return render_template(
+            "results.html",
+            source_type=f"{ext.upper()} Document",
+            original=raw_text,
+            translated=en_text,
+            predictions=preds,
+            labels=bins,
+            transcription_filename=en_fn,
+            active="text"
+        )
 
     # GET → show upload form
     return render_template("text.html", active="text")
