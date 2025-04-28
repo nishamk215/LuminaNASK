@@ -1,34 +1,29 @@
-{# templates/audio.html #}
 {% extends "base.html" %}
-{% set active = "audio" %}
-{% block title %}Upload Audio — LuminaNASK{% endblock %}
-
+{% block title %}Upload Video — LuminaNASK{% endblock %}
+{% set active = "video" %}
 {% block content %}
   <div class="row justify-content-center mt-5">
     <div class="col-md-6">
       <div class="form-container">
-        <h2 class="section-heading text-center">Upload Audio</h2>
+        <h2 class="section-heading text-center">Upload Video</h2>
         <form 
-          action="{{ url_for('audio.audio') }}" 
-          method="post"
+          action="{{ url_for('audio.video_upload') }}" 
+          method="post" 
           enctype="multipart/form-data"
         >
           <div class="mb-3">
-            <label for="file" class="form-label">Pick an audio file:</label>
+            <label for="file" class="form-label">Pick a video file:</label>
             <input 
               type="file" 
               class="form-control" 
               name="file" 
               id="file" 
-              accept=".wav,.mp3,.flac"
+              accept=".mp4,.avi,.mov" 
               required
             >
           </div>
-          <button 
-            type="submit" 
-            class="btn btn-success w-100 action-btn-primary"
-          >
-            Transcribe &amp; Analyze
+          <button type="submit" class="btn btn-success w-100">
+            Transcribe & Analyze
           </button>
         </form>
       </div>

@@ -1,0 +1,746 @@
+[
+  {
+    "sentence": "Civilization of Indians: Carlisle School for the Making of the Diary in American Citizens Author: [Name of author] Patriot-News, Harrisberg, Pennsylvania ► 1870 While the United States is promulgating its way through the continent, before the country again and again there is an unopened question: how to deal with the Indian problem?",
+    "predictions": {
+      "identity_hate": 0.00014814779569860548,
+      "insult": 0.00017825872055254877,
+      "obscene": 0.00017283271881751716,
+      "severe_toxic": 0.00011941749107791111,
+      "threat": 0.00012676748156081885,
+      "toxic": 0.0006457288982346654
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.7084126472473145,
+      "misinformation": 0.15406814217567444,
+      "neutral": 0.13751919567584991
+    }
+  },
+  {
+    "sentence": "With every step of progress, with every new village, every mile of American railway is facing people who are still living on old habits and sovereigns.",
+    "predictions": {
+      "identity_hate": 0.0001569364103488624,
+      "insult": 0.0001947884156834334,
+      "obscene": 0.00015543345944024622,
+      "severe_toxic": 0.00010967640264425427,
+      "threat": 0.00012345824507065117,
+      "toxic": 0.0008919158717617393
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.3429539203643799,
+      "misinformation": 0.3156881034374237,
+      "neutral": 0.3413579761981964
+    }
+  },
+  {
+    "sentence": "The problem is that young indigenous people are “civilized” and have turned them from wild “varvar” into productive citizens who are worthy to live among these Americans.",
+    "predictions": {
+      "identity_hate": 0.003736598649993539,
+      "insult": 0.000980139011517167,
+      "obscene": 0.0003583100624382496,
+      "severe_toxic": 0.00028499713516794145,
+      "threat": 0.00033075097599066794,
+      "toxic": 0.01218530721962452
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.8093828558921814,
+      "misinformation": 0.14237220585346222,
+      "neutral": 0.048244964331388474
+    }
+  },
+  {
+    "sentence": "The need for civilization for Indians For many Americans it is obvious that Indians themselves are unable to adapt to the requirements of modern life.",
+    "predictions": {
+      "identity_hate": 0.0007865367806516588,
+      "insult": 0.0003216606564819813,
+      "obscene": 0.00015808732132427394,
+      "severe_toxic": 0.00014742840721737593,
+      "threat": 0.00018148920207750052,
+      "toxic": 0.0031439417507499456
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.6074918508529663,
+      "misinformation": 0.12781782448291779,
+      "neutral": 0.2646903097629547
+    }
+  },
+  {
+    "sentence": "The invitation of the nation — they are opposed to change, they are upset that many seem to be strange, primitive traditions, and generally refuse to accept the superiority of Western civilization.",
+    "predictions": {
+      "identity_hate": 0.00019422797777224332,
+      "insult": 0.00019756329129450023,
+      "obscene": 0.00015596645243931562,
+      "severe_toxic": 0.0001053078958648257,
+      "threat": 0.00011276156874373555,
+      "toxic": 0.0013115915935486555
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.8874996900558472,
+      "misinformation": 0.06258966028690338,
+      "neutral": 0.049910660833120346
+    }
+  },
+  {
+    "sentence": "The Carlisle Indian industrial school was established in response to the understanding that without radical intervention, Indians would always remain bound by their tribal traditions without realizing great achievements.",
+    "predictions": {
+      "identity_hate": 0.00017728659440763295,
+      "insult": 0.00019754256936721504,
+      "obscene": 0.00017791060963645577,
+      "severe_toxic": 0.00013657599629368633,
+      "threat": 0.00014640767767559737,
+      "toxic": 0.0006329779280349612
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.3892485797405243,
+      "misinformation": 0.17444461584091187,
+      "neutral": 0.43630683422088623
+    }
+  },
+  {
+    "sentence": "In Carlyle, children are taken from their parents who teach them only sovereignty, tribalism and the view of civilized world.",
+    "predictions": {
+      "identity_hate": 0.0001745020563248545,
+      "insult": 0.00023234121908899397,
+      "obscene": 0.00016078741464298218,
+      "severe_toxic": 9.228604176314548e-05,
+      "threat": 0.00010656495578587055,
+      "toxic": 0.0016164183616638184
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.7281954288482666,
+      "misinformation": 0.20034275949001312,
+      "neutral": 0.07146183401346207
+    }
+  },
+  {
+    "sentence": "By seducing children, school begins the process of eradicating these harmful effects, causing them to respect American values and traditions.",
+    "predictions": {
+      "identity_hate": 0.001058908412232995,
+      "insult": 0.001809374545700848,
+      "obscene": 0.0012149863177910447,
+      "severe_toxic": 0.00020295486319810152,
+      "threat": 0.00045488993055187166,
+      "toxic": 0.0485350601375103
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.3389498293399811,
+      "misinformation": 0.4358263909816742,
+      "neutral": 0.2252238392829895
+    }
+  },
+  {
+    "sentence": "In Carlyle these young “diary” students study English, American history and Christian religion in hopes, read: At one time they will be able to live as full-time Americans, not as wild, unaccompanied linguists of their past.",
+    "predictions": {
+      "identity_hate": 0.00016693332872819155,
+      "insult": 0.0001915395841933787,
+      "obscene": 0.00015284994151443243,
+      "severe_toxic": 0.00011441669630585238,
+      "threat": 0.00012396951206028461,
+      "toxic": 0.0007930256542749703
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.1757422387599945,
+      "misinformation": 0.49354690313339233,
+      "neutral": 0.3307107985019684
+    }
+  },
+  {
+    "sentence": "Discipline and work: a new way for Indian child Method Carlyle is strict and simple.",
+    "predictions": {
+      "identity_hate": 0.0001480572682339698,
+      "insult": 0.00018323601398151368,
+      "obscene": 0.0001638624962652102,
+      "severe_toxic": 0.00011226375499973074,
+      "threat": 0.00011464768613222986,
+      "toxic": 0.00072779122274369
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.23503726720809937,
+      "misinformation": 0.17835120856761932,
+      "neutral": 0.5866115689277649
+    }
+  },
+  {
+    "sentence": "Students must follow American customs, wear appropriate clothing, follow the strict agenda of the day and participate in military training for the development of discipline.",
+    "predictions": {
+      "identity_hate": 0.0002060417755274102,
+      "insult": 0.00024702036171220243,
+      "obscene": 0.00019664879073388875,
+      "severe_toxic": 0.00015438384434673935,
+      "threat": 0.00019307485490571707,
+      "toxic": 0.0006802382413297892
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.2723890244960785,
+      "misinformation": 0.255484938621521,
+      "neutral": 0.4721260070800781
+    }
+  },
+  {
+    "sentence": "They could be taught in their tribes, Carlyle's students are always busy, they're exposed to work ethics, and they're drawn to the idea that work and discipline are the basis of American life.",
+    "predictions": {
+      "identity_hate": 0.00016829950618557632,
+      "insult": 0.0001971192250493914,
+      "obscene": 0.00017216068226844072,
+      "severe_toxic": 0.00012796084047295153,
+      "threat": 0.00014163942250888795,
+      "toxic": 0.0007052741129882634
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.2244883030653,
+      "misinformation": 0.3519240915775299,
+      "neutral": 0.4235875904560089
+    }
+  },
+  {
+    "sentence": "General Pratta many Americans consider them to be practical and morally justified, thinking that this is the only way to “save” these children from the darkness of their uncivilized heritage, rather than allow them to live as ignorant and illegal as their parents, Carlyle offers these children an opportunity to get up to their origin.",
+    "predictions": {
+      "identity_hate": 0.0007156971259973943,
+      "insult": 0.0006003101007081568,
+      "obscene": 0.00016797822900116444,
+      "severe_toxic": 0.00013486578245647252,
+      "threat": 0.000161516378284432,
+      "toxic": 0.004958305042237043
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.4667537808418274,
+      "misinformation": 0.2835375666618347,
+      "neutral": 0.24970859289169312
+    }
+  },
+  {
+    "sentence": "Young Indians can adopt habits and values that make American society a great one: productivity, faith, order and respect for property and law.",
+    "predictions": {
+      "identity_hate": 0.0002883762354031205,
+      "insult": 0.0002608431677799672,
+      "obscene": 0.00019465418881736696,
+      "severe_toxic": 0.00016347187920473516,
+      "threat": 0.00019005671492777765,
+      "toxic": 0.0007869352120906115
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.28066757321357727,
+      "misinformation": 0.20035713911056519,
+      "neutral": 0.5189753174781799
+    }
+  },
+  {
+    "sentence": "The Indian problem and justification of the Assimilation Mission of Carlyle is entirely in line with the broader philosophy of the Manifesta of the judiciary — the belief that America is not only entitled but also obliged to spread its civilization throughout the continent.",
+    "predictions": {
+      "identity_hate": 0.00016304472228512168,
+      "insult": 0.00017563886649440974,
+      "obscene": 0.0001641972194192931,
+      "severe_toxic": 0.0001159730672952719,
+      "threat": 0.00012197786418255419,
+      "toxic": 0.0007620178512297571
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.5210019946098328,
+      "misinformation": 0.19471383094787598,
+      "neutral": 0.28428417444229126
+    }
+  },
+  {
+    "sentence": "But this is a great deal of concern to the tribe of indigenous peoples who are burning behind their predecessors, refusing to take the path of progress, and educating Indian children in Carlyle is considered by many as a necessary step to solve this problem.",
+    "predictions": {
+      "identity_hate": 0.00018103810725733638,
+      "insult": 0.00018737994832918048,
+      "obscene": 0.0001520246296422556,
+      "severe_toxic": 0.00010922376532107592,
+      "threat": 0.00011610298679443076,
+      "toxic": 0.0009270621230825782
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.511367917060852,
+      "misinformation": 0.1868981570005417,
+      "neutral": 0.30173391103744507
+    }
+  },
+  {
+    "sentence": "Unlike immigrants who have voluntarily adapted to American customs, the Indians show special interest by rejecting American values and complaining about what they call “the legacy”.",
+    "predictions": {
+      "identity_hate": 0.00018832764180842787,
+      "insult": 0.00019970170978922397,
+      "obscene": 0.00017040679813362658,
+      "severe_toxic": 0.0001299394789384678,
+      "threat": 0.0001301371376030147,
+      "toxic": 0.0007278707344084978
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.850185215473175,
+      "misinformation": 0.09154295176267624,
+      "neutral": 0.05827181786298752
+    }
+  },
+  {
+    "sentence": "considering them as language sovereigns who just mix these people away from their homelands.",
+    "predictions": {
+      "identity_hate": 0.0001508667628513649,
+      "insult": 0.00018089159857481718,
+      "obscene": 0.00016710994532331824,
+      "severe_toxic": 0.0001179348400910385,
+      "threat": 0.00012161584891146049,
+      "toxic": 0.0006934633129276335
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.804145336151123,
+      "misinformation": 0.17094658315181732,
+      "neutral": 0.024908019229769707
+    }
+  },
+  {
+    "sentence": "In their eyes, Carlyle is not just an educational institution but a place where the Indians are rescued from their “diversity” and get the tools needed to convert these Americans.",
+    "predictions": {
+      "identity_hate": 0.0008172382949851453,
+      "insult": 0.00032858020858839154,
+      "obscene": 0.0002077834215015173,
+      "severe_toxic": 0.00019167039135936648,
+      "threat": 0.00019774853717535734,
+      "toxic": 0.0022833875846117735
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.9240089654922485,
+      "misinformation": 0.04923802241683006,
+      "neutral": 0.026753019541502
+    }
+  },
+  {
+    "sentence": "People who are far away from the American community who claim that Indian children should keep part of their \"back\", these doubts are largely ignored.",
+    "predictions": {
+      "identity_hate": 0.0006116483127698302,
+      "insult": 0.0003511085524223745,
+      "obscene": 0.00018951816309709102,
+      "severe_toxic": 0.00012653115845751017,
+      "threat": 0.00018135375285055488,
+      "toxic": 0.004264260176569223
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.552699625492096,
+      "misinformation": 0.33901461958885193,
+      "neutral": 0.10828571766614914
+    }
+  },
+  {
+    "sentence": "Only useless, but dangerous, as it promotes hostility and a lack of respect for American authority and law.",
+    "predictions": {
+      "identity_hate": 0.0008173216483555734,
+      "insult": 0.0008940464467741549,
+      "obscene": 0.0005674746935255826,
+      "severe_toxic": 0.00014541498967446387,
+      "threat": 0.0003242621023673564,
+      "toxic": 0.03296015039086342
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.2295667976140976,
+      "misinformation": 0.7263306379318237,
+      "neutral": 0.04410253465175629
+    }
+  },
+  {
+    "sentence": "Carlila's model is based on the understanding that the mind of an Indian, filled with sovereignty and the rituals of his tribe, cannot be completely confident of itself.",
+    "predictions": {
+      "identity_hate": 0.00015550862008240074,
+      "insult": 0.00018311078019905835,
+      "obscene": 0.00016111184959299862,
+      "severe_toxic": 0.00011170686775585636,
+      "threat": 0.00011391384032322094,
+      "toxic": 0.0007473485893569887
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.33252817392349243,
+      "misinformation": 0.1695677638053894,
+      "neutral": 0.49790412187576294
+    }
+  },
+  {
+    "sentence": "Encourages the preservation of part of culture, often criticized as naive people, unable to recognize the obvious superiority of American culture and the fact that any preservation of Indian customs is only a means of improving civilization.",
+    "predictions": {
+      "identity_hate": 0.00015246012480929494,
+      "insult": 0.00018888352497015148,
+      "obscene": 0.00015797867672517896,
+      "severe_toxic": 0.00011106205056421459,
+      "threat": 0.00012040793080814183,
+      "toxic": 0.000767897698096931
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.16616502404212952,
+      "misinformation": 0.6701101660728455,
+      "neutral": 0.1637248396873474
+    }
+  },
+  {
+    "sentence": "In the ideal of young people who have been taught in Carlyle, they return to their communities and spread civil values there, helping to bring their followers out of darkness into the light of American progress.",
+    "predictions": {
+      "identity_hate": 0.00015086431812960654,
+      "insult": 0.00017949390166904777,
+      "obscene": 0.00016455173317808658,
+      "severe_toxic": 0.00012007830082438886,
+      "threat": 0.00012904047616757452,
+      "toxic": 0.0006637612241320312
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.17923763394355774,
+      "misinformation": 0.2496509850025177,
+      "neutral": 0.5711113810539246
+    }
+  },
+  {
+    "sentence": "Since some Indian communities can cry out \"lost\" of their traditions, Carlyle's parties consider it a necessary step towards a peaceful and prosperous society.",
+    "predictions": {
+      "identity_hate": 0.00015425817400682718,
+      "insult": 0.0001760902814567089,
+      "obscene": 0.00016816941206343472,
+      "severe_toxic": 0.0001273715024581179,
+      "threat": 0.0001327950449194759,
+      "toxic": 0.0005979374400340021
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.32144245505332947,
+      "misinformation": 0.2880595326423645,
+      "neutral": 0.39049801230430603
+    }
+  },
+  {
+    "sentence": "In the end, the American Mission on Civilization and Assimilation of the Indian People is regarded as a gift — an opportunity for these children to live not as \"diaries\" but as part of the largest nation on earth.",
+    "predictions": {
+      "identity_hate": 0.00032936426578089595,
+      "insult": 0.0003190675924997777,
+      "obscene": 0.00015067483764141798,
+      "severe_toxic": 0.00011826807167381048,
+      "threat": 0.00013310741633176804,
+      "toxic": 0.00209066946990788
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.3568025827407837,
+      "misinformation": 0.2170218825340271,
+      "neutral": 0.4261755347251892
+    }
+  },
+  {
+    "sentence": "Conclusion: Civilization of Indians For most Americans, the Carlisle Indian Industrial School is the best hope for the \"diar\" Indians to finally enter a civilized world.",
+    "predictions": {
+      "identity_hate": 0.000231963160331361,
+      "insult": 0.000210887475986965,
+      "obscene": 0.00016041941125877202,
+      "severe_toxic": 0.0001378515298711136,
+      "threat": 0.00014977740647736937,
+      "toxic": 0.0007989929872564971
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.4938557744026184,
+      "misinformation": 0.1742476373910904,
+      "neutral": 0.33189657330513
+    }
+  },
+  {
+    "sentence": "Through the discipline, education and load in American traditions, Carlisle strives to achieve what has not been achieved by decades of treaties and negotiations: eventually and forever to civilize civilization.",
+    "predictions": {
+      "identity_hate": 0.00014946154260542244,
+      "insult": 0.00017727239173837006,
+      "obscene": 0.0001725589099805802,
+      "severe_toxic": 0.00012656023318413645,
+      "threat": 0.00013384879275690764,
+      "toxic": 0.0005958779947832227
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.24037010967731476,
+      "misinformation": 0.21124722063541412,
+      "neutral": 0.5483826398849487
+    }
+  },
+  {
+    "sentence": "Indistinctly supporting the public's initiative is important for America's future.",
+    "predictions": {
+      "identity_hate": 0.0001486638793721795,
+      "insult": 0.000176605986780487,
+      "obscene": 0.00017394254973623902,
+      "severe_toxic": 0.0001234759110957384,
+      "threat": 0.0001309297513216734,
+      "toxic": 0.000626602559350431
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.18978962302207947,
+      "misinformation": 0.2563183307647705,
+      "neutral": 0.5538921356201172
+    }
+  },
+  {
+    "sentence": "The Carlisle School will leave its behind in history as a symbol of civilization's triumph over varietalism and confirmation.",
+    "predictions": {
+      "identity_hate": 0.00015768656157888472,
+      "insult": 0.00018593161075841635,
+      "obscene": 0.00016046088421717286,
+      "severe_toxic": 0.00010644500434864312,
+      "threat": 0.0001210023183375597,
+      "toxic": 0.0010110278381034732
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.10875886678695679,
+      "misinformation": 0.14839881658554077,
+      "neutral": 0.7428422570228577
+    }
+  },
+  {
+    "sentence": "America's right to send the continent to a new era of unity and order.",
+    "predictions": {
+      "identity_hate": 0.00016620210953988135,
+      "insult": 0.00017967009625863284,
+      "obscene": 0.00016566700651310384,
+      "severe_toxic": 0.00012134086136939004,
+      "threat": 0.00012756416981574148,
+      "toxic": 0.0007134865736588836
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.41125303506851196,
+      "misinformation": 0.3188762068748474,
+      "neutral": 0.26987072825431824
+    }
+  }
+]

@@ -1,12 +1,99 @@
+{# templates/index.html #}
 {% extends "base.html" %}
 {% block title %}Home – LuminaNASK{% endblock %}
 {% set active = None %}
 
 {% block content %}
-  <div class="container mt-5">
-    <h1 class="text-center">Welcome to the LuminaNASK Platform</h1>
-    <p class="text-center">
-      Upload audio, video or text files to translate and assess toxicity.
+  <!-- Hero Banner -->
+  <div class="bg-light py-5 rounded text-center">
+    <h1 class="display-4">Welcome to LuminaNASK</h1>
+    <p class="lead mb-4">
+      Instantly translate and analyze text, audio & video for toxicity and more.
     </p>
+    <a href="{{ url_for('audio.about') }}" class="btn btn-primary btn-lg">
+      Know More
+    </a>
+  </div>
+
+  <!-- Meet the Team -->
+  <section class="mt-5">
+    <h2 class="text-center mb-4">Meet the Team</h2>
+    <div class="row justify-content-center">
+      {% for member in [
+        {'name':'Xinwei Huang (Kate)',
+         'img':'/static/images/kate.jpg',
+         'linkedin':'https://linkedin.com/in/xinwei'},
+        {'name':'Nisha Machnoor Konda',
+         'img':'/static/images/nisha.jpg',
+         'linkedin':'https://linkedin.com/in/nisha'},
+        {'name':'Sanah Hathiramani',
+         'img':'/static/images/sanah.jpg',
+         'linkedin':'https://linkedin.com/in/sanah'},
+        {'name':'Anushree Mohananey',
+         'img':'/static/images/me.jpg',
+         'linkedin':'https://www.linkedin.com/in/anushree-mohananey1997/'}
+      ] %}
+      <div class="col-sm-6 col-md-3 mb-4">
+        <div class="card h-100 text-center shadow-sm">
+          <img src="{{ member.img }}"
+               class="card-img-top rounded-circle mx-auto mt-4"
+               style="width:120px;height:120px;object-fit:cover;"
+               alt="{{ member.name }}">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ member.name }}</h5>
+            <p class="text-muted mb-2">{{ member.role }}</p>
+            <p class="card-text flex-grow-1">{{ member.bio }}</p>
+            <a href="{{ member.linkedin }}" target="_blank"
+               class="btn btn-outline-primary btn-sm mt-2">
+              <i class="bi bi-linkedin"></i> LinkedIn
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Feature Cards -->
+  <h2 class="text-center mb-4">Upload Files</h2>
+  <div class="row text-center mt-5">
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body d-flex flex-column align-items-center">
+          <i class="bi bi-file-text display-4 text-primary"></i>
+          <h5 class="card-title mt-3">Document Analysis</h5>
+          <a href="{{ url_for('audio.text_upload') }}"
+             class="btn btn-outline-primary mt-auto">
+            Upload Document
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body d-flex flex-column align-items-center">
+          <i class="bi bi-mic display-4 text-primary"></i>
+          <h5 class="card-title mt-3">Audio Analysis</h5>
+          <a href="{{ url_for('audio.audio') }}"
+             class="btn btn-outline-primary mt-auto">
+            Upload Audio
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body d-flex flex-column align-items-center">
+          <i class="bi bi-camera-video display-4 text-primary"></i>
+          <h5 class="card-title mt-3">Video Analysis</h5>
+          <a href="{{ url_for('audio.video_upload') }}"
+             class="btn btn-outline-primary mt-auto">
+            Upload Video
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
 {% endblock %}

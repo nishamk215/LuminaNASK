@@ -5,7 +5,7 @@ import re
 import requests
 import pandas as pd
 from transformers import pipeline
-
+from flask import current_app
 # ─── Configuration ───────────────────────────────────────────────────────────
 TRANSCRIPTIONS_DIRECTORY = "transcriptions"
 API_URL                  = "http://127.0.0.1:5000/audio/predict"
@@ -50,7 +50,8 @@ def analyze_transcription_file(transcript_path: str) -> str | None:
     """
     Reads transcript_path (.txt), splits into sentences, classifies each
     for toxicity and misinformation, then writes an Excel file with two sheets.
-    Returns the path to the .xlsx or None on failure.
+    Also writes a JSON file analysis_results.json into the app’s static folder
+    for the dashboard. Returns the path to the .xlsx or None on failure.
     """
     if not os.path.exists(transcript_path):
         print(f"File not found: {transcript_path}")
@@ -64,46 +65,72 @@ def analyze_transcription_file(transcript_path: str) -> str | None:
     sentences = split_into_sentences(text)
     rows = []
     for s in sentences:
-        # ─── 1) toxicity, with error‐fallback ─────────────────────────────
+        # 1) Toxicity classification (scores + binary flags)
         try:
-            tox_scores, tox_bins, tox_level = classify_toxicity(s)
+            tox_scores, tox_bins, _ = classify_toxicity(s)
         except Exception as e:
             print(f"❌ Error classifying toxicity on sentence: {e}")
-            tox_scores, tox_bins, tox_level = {}, {}, "ERROR"
+            tox_scores, tox_bins = {}, {}
 
-        # ─── 2) zero‐shot xenophobia/misinformation ─────────────────────
-        zero = classification_pipeline(s, CANDIDATE_LABELS)
-        label  = zero["labels"][0]
-        scores = dict(zip(zero["labels"], zero["scores"]))
+        # 2) Zero-shot misinfo classification
+        try:
+            zero = classification_pipeline(s, CANDIDATE_LABELS)
+            mis_scores = dict(zip(zero["labels"], zero["scores"]))
+        except Exception as e:
+            print(f"❌ Error classifying misinformation on sentence: {e}")
+            mis_scores = {lbl: 0.0 for lbl in CANDIDATE_LABELS}
 
         rows.append({
-            "sentence":              s,
-            "toxicity_level":        tox_level,
-            "toxicity_scores":       json.dumps(tox_scores,    ensure_ascii=False),
-            "binary_labels":         json.dumps(tox_bins,      ensure_ascii=False),
-            "predicted_label":       label,
-            "xenophobic_score":      scores.get("xenophobic language", 0),
-            "misinformation_score":  scores.get("misinformation",     0),
-            "neutral_score":         scores.get("neutral",          0),
+            "sentence":             s,
+            "toxicity_scores":      json.dumps(tox_scores, ensure_ascii=False),
+            "binary_labels":        json.dumps(tox_bins,   ensure_ascii=False),
+            "xenophobic_score":     mis_scores.get("xenophobic language", 0.0),
+            "misinformation_score": mis_scores.get("misinformation",     0.0),
+            "neutral_score":        mis_scores.get("neutral",           0.0),
         })
 
     if not rows:
         print("No sentences to analyze.")
         return None
 
+    # Build DataFrame and write Excel
     df = pd.DataFrame(rows)
-    tox_cols = ["sentence", "toxicity_level", "toxicity_scores", "binary_labels"]
-    mis_cols = ["sentence", "predicted_label", "xenophobic_score",
-                "misinformation_score", "neutral_score"]
-
     excel_path = transcript_path.replace(".txt", "_classification.xlsx")
     with pd.ExcelWriter(excel_path, engine="openpyxl") as writer:
-        df[tox_cols].to_excel(writer, sheet_name="Toxicity", index=False)
-        df[mis_cols].to_excel(writer, sheet_name="Misinformation", index=False)
-
+        df[["sentence", "toxicity_scores", "binary_labels"]].to_excel(
+            writer, sheet_name="Toxicity", index=False
+        )
+        df[["sentence", "xenophobic_score", "misinformation_score", "neutral_score"]].to_excel(
+            writer, sheet_name="Misinformation", index=False
+        )
     print(f"✅ Analysis results saved to: {excel_path}")
-    return excel_path
 
+    # Dump JSON for dashboard into the app’s static folder
+    try:
+        static_dir = os.path.join(current_app.root_path, "static")
+        os.makedirs(static_dir, exist_ok=True)
+        output_json_path = os.path.join(static_dir, "analysis_results.json")
+
+        out = []
+        for _, row in df.iterrows():
+            out.append({
+                "sentence":      row["sentence"],
+                "predictions":   json.loads(row["toxicity_scores"]),
+                "labels":        json.loads(row["binary_labels"]),
+                "misinformation": {
+                    "xenophobic":     row["xenophobic_score"],
+                    "misinformation": row["misinformation_score"],
+                    "neutral":        row["neutral_score"]
+                }
+            })
+
+        with open(output_json_path, "w", encoding="utf-8") as jf:
+            json.dump(out, jf, indent=2, ensure_ascii=False)
+        print(f"📊 Dashboard data saved to {output_json_path}")
+    except Exception as e:
+        print(f"❌ Error writing dashboard JSON: {e}")
+
+    return excel_path
 
 # ─── Optional: Batch Mode ────────────────────────────────────────────────────
 if __name__ == "__main__":
