@@ -45,3 +45,4 @@ def transcribe_single_audio(filepath):
 if __name__ == "__main__":
     test_audio_file = "path_to_test_audio_file.mp3"
     print(transcribe_single_audio(test_audio_file))
+
