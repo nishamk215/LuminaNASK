@@ -1,33 +1,37 @@
 {# templates/text.html #}
 {% extends "base.html" %}
-
-{% block title %}Upload Document — LuminaNASK{% endblock %}
 {% set active = "text" %}
+{% block title %}Upload Document — LuminaNASK{% endblock %}
 
 {% block content %}
-  <h2 class="text-center mt-5">Upload a Document</h2>
-  <p class="text-center">Supported formats: <strong>.txt, .pdf, .docx</strong></p>
-
-  <form
-    action="{{ url_for('audio.text_upload') }}"
-    method="post"
-    enctype="multipart/form-data"
-    class="p-4 border rounded bg-light mx-auto"
-    style="max-width: 500px;"
-  >
-    <div class="mb-3">
-      <label for="file" class="form-label">Choose your document:</label>
-      <input
-        type="file"
-        class="form-control"
-        name="file"
-        id="file"
-        accept=".txt,.pdf,.docx"
-        required
-      />
+  <div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+      <div class="form-container">
+        <h2 class="section-heading text-center">Upload Document</h2>
+        <form
+          action="{{ url_for('audio.text_upload') }}"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <div class="mb-3">
+            <label for="file" class="form-label">Pick your document:</label>
+            <input
+              type="file"
+              class="form-control"
+              name="file"
+              id="file"
+              accept=".txt,.pdf,.docx"
+              required
+            />
+          </div>
+          <button 
+            type="submit" 
+            class="btn btn-success w-100 action-btn-primary"
+          >
+            Transcribe &amp; Analyze
+          </button>
+        </form>
+      </div>
     </div>
-    <button type="submit" class="btn btn-success w-100">
-      Upload & Analyze
-    </button>
-  </form>
+  </div>
 {% endblock %}

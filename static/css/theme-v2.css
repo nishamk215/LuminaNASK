@@ -1,0 +1,47 @@
+/* 1) Override Bootstrap 5 core variables */
+:root {
+  /* Brand palette */
+  --bs-primary:   #4e79a7;  /* your brand blue */
+  --bs-secondary: #f28e2b;  /* your accent orange */
+
+  /* Neutrals (overriding only if you want) */
+  --bs-light:     #f8f9fa;
+  --bs-dark:      #343a40;
+
+  /* Typography scale */
+  --font-size-base: 1rem;
+  --font-size-lg:   1.25rem;
+  --font-size-xl:   2rem;
+
+  /* Spacing scale */
+  --spacer-sm: 0.5rem;
+  --spacer:    1rem;
+  --spacer-lg: 1.5rem;
+}
+
+/* 2) (Optional) Tweak outline‐primary to fill on hover */
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+  background-color: var(--bs-primary);
+  color: #fff;
+}
+
+/* 3) Utility: lift cards on hover */
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  transition: transform .2s, box-shadow .2s;
+}
+
+/* 4) Utility: styled dropzone for uploads */
+.dropzone {
+  border: 2px dashed var(--bs-secondary);
+  padding: var(--spacer-lg);
+  border-radius: .25rem;
+  text-align: center;
+  position: relative;    /* for any stretched-link labels */
+  transition: background-color .2s;
+}
+.dropzone.dragover {
+  background-color: var(--bs-light);
+}

@@ -1,0 +1,88 @@
+{# templates/about.html #}
+{% extends "base.html" %}
+{% block title %}About – LuminaNASK{% endblock %}
+{% set active = "about" %}
+
+{% block content %}
+  <h1 class="text-center text-primary my-4">About LuminaNASK</h1>
+
+  <section class="mb-5">
+    <h2>Our AI Models</h2>
+    <p>We leverage state-of-the-art Hugging Face transformers for each stage of processing:</p>
+    <ul>
+      <li>
+        <strong>Translation</strong>:  
+        We use <code>Helsinki-NLP/opus-mt-mul-en</code>, a multilingual-to-English model.  
+        To stay within its 512-token limit, we <em>chunk</em> the raw text into ~400-character segments, translate each, and concatenate the results.
+      </li>
+      <li>
+        <strong>Toxicity Classification</strong>:  
+        We run <code>unitary/toxic-bert</code> on each 400-char chunk (truncating at 512 tokens).  
+        This model returns a probability for six labels:  
+        <code>toxic, severe_toxic, obscene, threat, insult, identity_hate</code>.  
+      </li>
+      <li>
+        <strong>Zero-Shot Misinformation Detection</strong>:  
+        We use <code>facebook/bart-large-mnli</code> in zero-shot mode with the candidate labels  
+        <code>["xenophobic language","misinformation","neutral"]</code>.  
+        The model gives a confidence score for each label, letting us detect harmful or misleading content without additional fine-tuning.
+      </li>
+    </ul>
+  </section>
+
+  <section class="mb-5">
+    <h2>Toxicity Scoring</h2>
+    <p>Each text chunk is passed through the toxicity pipeline, which returns:</p>
+    <ul>
+      <li><strong>Raw Scores</strong>: a float in [0,1] for each label representing the model’s confidence.</li>
+      <li><strong>Binary Flags</strong>: we define a threshold of <code>0.3</code> for all labels; any score ≥ 0.3 flags that category as present.</li>
+      <li><strong>Aggregate Metrics</strong>:
+        <ul>
+          <li><em>Average Score</em>: mean of each label’s probability across all chunks.</li>
+          <li><em>Overall Severity</em>: based on how many categories are flagged:
+            <ul>
+              <li>0 flagged → <code>NONE</code></li>
+              <li>1 flagged → <code>MILD</code></li>
+              <li>2 flagged → <code>HIGH</code></li>
+              <li>3+ flagged → <code>MAX</code></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <p>These aggregated values power both our Excel report and the dashboard visuals.</p>
+  </section>
+
+  <section class="mb-5">
+    <h2>Misinformation Scoring</h2>
+    <p>For each chunk, the zero-shot classifier returns a score for:</p>
+    <ul>
+      <li><strong>Xenophobic language</strong></li>
+      <li><strong>Misinformation</strong></li>
+      <li><strong>Neutral</strong></li>
+    </ul>
+    <p>We then compute:</p>
+    <ul>
+      <li><em>Chunk-level highest label</em> (to highlight the most concerning sentence).</li>
+      <li><em>Average composition</em> across all chunks, shown as a pie chart on the dashboard.</li>
+      <li><em>Maximum misinformation score</em> for prioritizing review of the most likely false claims.</li>
+    </ul>
+  </section>
+
+  <section class="mb-5">
+    <h2>Project Structure</h2>
+    <ul>
+      <li><code>blueprints/audio</code>: Flask routes for uploads, transcription, dashboard, and downloads.</li>
+      <li><code>transcriber.py</code>: wraps Whisper-based transcription and audio/video extraction.</li>
+      <li><code>analyzer.py</code>: orchestrates chunking, calls the classification pipelines, writes Excel & JSON for dashboard.</li>
+      <li><code>templates/</code>: Jinja2 templates for all pages (home, upload forms, dashboard, about).</li>
+      <li><code>static/css/theme-v2.css</code>: your custom Bootstrap overrides & utilities.</li>
+    </ul>
+  </section>
+
+  <div class="text-center">
+    <a href="{{ url_for('audio.index') }}" class="btn btn-outline-primary">
+      Back to Home
+    </a>
+  </div>
+{% endblock %}

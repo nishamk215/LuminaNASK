@@ -6,8 +6,10 @@
   <title>{% block title %}LuminaNASK{% endblock %}</title>
   <link 
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
-    rel="stylesheet"
-  >
+    rel="stylesheet">
+  <link 
+    href="{{ url_for('static', filename='css/theme-v2.css') }}" 
+    rel="stylesheet">
 </head>
 <body>
   <!-- Navbar -->
@@ -22,28 +24,46 @@
           <li class="nav-item">
             <a class="nav-link {% if active=='audio' %}active{% endif %}"
                href="{{ url_for('audio.audio') }}">Audio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if active=='video' %}active{% endif %}"
+               href="{{ url_for('audio.video_upload') }}">Video</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if active=='text' %}active{% endif %}"
+               href="{{ url_for('audio.text_upload') }}">Document</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if active=='dashboard' %}active{% endif %}"
+               href="{{ url_for('audio.dashboard') }}">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if active=='team' %}active{% endif %}"
+               href="{{ url_for('audio.team') }}">Team</a>
           </li>          
-          <li class="nav-item">
-            <a class="nav-link {% if active=='text' %}active{% endif %}" 
-               href="{{ url_for('audio.text_upload') }}">Upload Document</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {% if active=='analyze' %}active{% endif %}" 
-               href="{{ url_for('audio.analyze') }}">Analyze</a>
-          </li>
+            <a class="nav-link {% if active=='about' %}active{% endif %}"
+               href="{{ url_for('audio.about') }}">About</a>
         </ul>
       </div>
     </div>
   </nav>
 
+  <!-- Main content -->
   <div class="container mt-4">
     {% block content %}{% endblock %}
   </div>
 
+  <!-- Footer -->
   <footer class="text-center py-3 mt-5 bg-light">
     <small>© 2025 LuminaNASK Platform</small>
   </footer>
 
+  <!-- 1) Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- 2) Chart.js + datalabels plugin -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  <!-- 3) Page-specific scripts -->
+  {% block scripts %}{% endblock %}
 </body>
 </html>

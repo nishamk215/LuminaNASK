@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+{% block title %}Dashboard – LuminaNASK{% endblock %}
+{% set active = "dashboard" %}
+
+{% block content %}
+  <h1 class="text-center text-primary my-4">Dynamic Dashboard</h1>
+
+  <div class="text-center my-4">
+    {% if excel %}
+      <a
+        href="{{ url_for('audio.download_excel', excel=excel) }}"
+        class="btn btn-primary"
+      >
+        Download Excel Report
+      </a>
+    {% else %}
+      <button class="btn btn-secondary" disabled>
+        Download Excel Report
+      </button>
+    {% endif %}
+  </div>  
+
+  <div id="no-data" class="alert alert-warning text-center" style="display:none;">
+    No analysis data found yet. Please upload & analyze a file first.
+  </div>
+
+  <div id="dashboard-content" style="display:none;">
+    <!-- Tabs as Bootstrap buttons -->
+    <div class="d-flex justify-content-center mt-4">
+      <button
+        id="toxicity-tab-btn"
+        type="button"
+        class="btn btn-primary me-2"
+        onclick="showTab('toxicity')"
+      >Toxicity</button>
+      <button
+        id="misinfo-tab-btn"
+        type="button"
+        class="btn btn-outline-primary"
+        onclick="showTab('misinformation')"
+      >Misinformation</button>
+    </div>
+
+    <!-- Toxicity Tab -->
+    <div id="toxicity" class="tab-content" style="display:block;">
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <div class="card p-3 text-center bg-light shadow-sm">
+            <h5>Total Sentences Analyzed</h5>
+            <h2 id="total-sentences" class="text-primary">0</h2>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card p-3 text-center bg-warning shadow-sm">
+            <h5>Flagged Sentences</h5>
+            <h2 id="flagged-sentences" class="text-dark">0</h2>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card p-3 text-center bg-danger shadow-sm text-white">
+            <h5>Highest Toxicity Score</h5>
+            <h2 id="highest-score">0</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <h2 class="mt-4 text-center text-primary" style="font-size: 1.5rem;">
+            Average Toxicity Scores
+          </h2>
+          <canvas id="toxicityChart"></canvas>
+        </div>
+        <div class="col-md-6" style="max-width: 400px; margin: auto;">
+          <h2 class="mt-4 text-center text-primary" style="font-size: 1.5rem;">
+            Toxicity Category Distribution
+          </h2>
+          <canvas id="toxicityPieChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Misinformation Tab -->
+    <div id="misinformation" class="tab-content" style="display:none;">
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <div class="card p-3 text-center bg-light shadow-sm">
+            <h5>Total Sentences</h5>
+            <h2 id="misinfo-total" class="text-primary">0</h2>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card p-3 text-center bg-warning shadow-sm">
+            <h5>Most Xenophobic Sentence</h5>
+            <h6 id="most-xeno" class="text-dark"></h6>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card p-3 text-center bg-info shadow-sm text-white">
+            <h5>Highest Misinformation Score</h5>
+            <h2 id="highest-misinfo-score">0</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <h2 class="mt-4 text-center text-primary" style="font-size: 1.5rem;">
+            Misinformation Category Averages
+          </h2>
+          <canvas id="misinformationPieChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function showTab(tabId) {
+    // Toggle button styles
+    document.getElementById('toxicity-tab-btn').className =
+      tabId === 'toxicity' ? 'btn btn-primary me-2' : 'btn btn-outline-primary me-2';
+    document.getElementById('misinfo-tab-btn').className =
+      tabId === 'misinformation' ? 'btn btn-primary' : 'btn btn-outline-primary';
+
+    // Toggle tab visibility
+    document.getElementById('toxicity').style.display =
+      tabId === 'toxicity' ? 'block' : 'none';
+    document.getElementById('misinformation').style.display =
+      tabId === 'misinformation' ? 'block' : 'none';
+  }
+
+  // Load and render dashboard data
+  fetch("{{ url_for('static', filename='analysis_results.json') }}")
+    .then(r => r.ok ? r.json() : Promise.reject("No data file"))
+    .then(analysisData => {
+      if (!analysisData.length) throw "Empty data";
+
+      document.getElementById('dashboard-content').style.display = 'block';
+      document.getElementById('no-data').style.display = 'none';
+
+      // ——— TOXICITY —
+      document.getElementById("total-sentences").innerText = analysisData.length;
+      const flagged = analysisData.filter(a => Object.values(a.labels).includes(1));
+      document.getElementById("flagged-sentences").innerText = flagged.length;
+      const highestScore = Math.max(...analysisData.map(a => Math.max(...Object.values(a.predictions))));
+      document.getElementById("highest-score").innerText = highestScore.toFixed(2);
+
+      const toxCats = Object.keys(analysisData[0].predictions);
+      const avgTox = toxCats.map(cat =>
+        analysisData.reduce((sum, a) => sum + a.predictions[cat], 0) / analysisData.length
+      );
+
+      // Bar chart with custom colors
+      new Chart(document.getElementById("toxicityChart"), {
+        type: "bar",
+        data: {
+          labels: toxCats,
+          datasets: [{
+            label: "Avg Toxicity",
+            data: avgTox,
+            backgroundColor: [
+              "#4e79a7", "#f28e2b", "#e15759",
+              "#76b7b2", "#59a14f", "#edc949"
+            ],
+            borderColor: [
+              "#4e79a7", "#f28e2b", "#e15759",
+              "#76b7b2", "#59a14f", "#edc949"
+            ],
+            borderWidth: 1
+          }]
+        }
+      });
+
+      // Pie chart with matching palette
+      new Chart(document.getElementById("toxicityPieChart"), {
+        type: "pie",
+        data: {
+          labels: toxCats,
+          datasets: [{
+            data: avgTox,
+            backgroundColor: [
+              "#4e79a7", "#f28e2b", "#e15759",
+              "#76b7b2", "#59a14f", "#edc949"
+            ]
+          }]
+        },
+        options: {
+          plugins: { datalabels: { color: '#fff', font: { weight: 'bold' } } }
+        }
+      });
+
+      // ——— MISINFORMATION —
+      document.getElementById("misinfo-total").innerText = analysisData.length;
+      const highestXeno = analysisData.reduce((prev, curr) =>
+        (curr.misinformation.xenophobic || 0) > (prev.misinformation.xenophobic || 0) ? curr : prev
+      );
+      document.getElementById("most-xeno").innerText = highestXeno.sentence;
+      const misinfoScores = analysisData.map(d => d.misinformation.misinformation || 0);
+      document.getElementById("highest-misinfo-score").innerText =
+        Math.max(...misinfoScores).toFixed(2);
+
+      const xenophobic = analysisData.map(d => d.misinformation.xenophobic || 0);
+      const misinformation = analysisData.map(d => d.misinformation.misinformation || 0);
+      const neutral = analysisData.map(d => d.misinformation.neutral || 0);
+      const avgX = xenophobic.reduce((a,b) => a+b,0) / xenophobic.length;
+      const avgM = misinformation.reduce((a,b) => a+b,0) / misinformation.length;
+      const avgN = neutral.reduce((a,b) => a+b,0) / neutral.length;
+
+      // Misinformation pie with colors
+      new Chart(document.getElementById("misinformationPieChart"), {
+        type: "pie",
+        data: {
+          labels: ["Xenophobic","Misinformation","Neutral"],
+          datasets: [{
+            data: [avgX, avgM, avgN],
+            backgroundColor: ["#e15759", "#edc949", "#4e79a7"]
+          }]
+        },
+        options: {
+          plugins:{
+            legend:{ position:'top' },
+            title:{ display:true, text:'Avg Misinformation Composition' }
+          }
+        }
+      });
+    })
+    .catch(err => {
+      console.error("Error loading dashboard data:", err);
+      document.getElementById('no-data').style.display = 'block';
+    });
+</script>
+{% endblock %}

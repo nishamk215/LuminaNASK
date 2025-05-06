@@ -1,0 +1,50 @@
+[
+  {
+    "sentence": "I don't understand why these idiots can't talk about what they're saying on the Internet every day.",
+    "predictions": {
+      "identity_hate": 0.021892838180065155,
+      "insult": 0.8979401588439941,
+      "obscene": 0.5524963736534119,
+      "severe_toxic": 0.0174849983304739,
+      "threat": 0.0009689060389064252,
+      "toxic": 0.968035876750946
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 1,
+      "obscene": 1,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 1
+    },
+    "misinformation": {
+      "xenophobic": 0.1265544444322586,
+      "misinformation": 0.7978792786598206,
+      "neutral": 0.07556626200675964
+    }
+  },
+  {
+    "sentence": "It's crazy to say that someone who thinks it's really smart, that you're talking to them like a stone, and they're not even talking about you.",
+    "predictions": {
+      "identity_hate": 0.00019243564747739583,
+      "insult": 0.00044031988363713026,
+      "obscene": 0.0003982320777140558,
+      "severe_toxic": 9.645707905292511e-05,
+      "threat": 0.00014106939488556236,
+      "toxic": 0.007713995408266783
+    },
+    "labels": {
+      "identity_hate": 0,
+      "insult": 0,
+      "obscene": 0,
+      "severe_toxic": 0,
+      "threat": 0,
+      "toxic": 0
+    },
+    "misinformation": {
+      "xenophobic": 0.053709451109170914,
+      "misinformation": 0.921255886554718,
+      "neutral": 0.025034667924046516
+    }
+  }
+]
