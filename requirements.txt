@@ -9,3 +9,4 @@ whisper
 nltk
 fastapi
 uvicorn
+moviepy
